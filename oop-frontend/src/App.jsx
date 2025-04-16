@@ -44,7 +44,8 @@ function App() {
     }
   };
 
-  // Backend'e veri gönderme işlemi
+  // Mevcut handleSubmitToBackend fonksiyonunuz zaten çalışıyor, 
+  // sadece birkaç küçük iyileştirme yapacağız
   const handleSubmitToBackend = async () => {
     setIsSubmitting(true);
     
@@ -54,6 +55,8 @@ function App() {
         playerNumber: index + 1,
         country: country
       }));
+      
+      console.log("Sending data to backend:", gameData);
       
       // Backend'e gönderme
       const response = await fetch('http://localhost:8080/api/game/start', {
@@ -65,17 +68,19 @@ function App() {
       });
       
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        const errorText = await response.text();
+        throw new Error(`HTTP error! Status: ${response.status}, Response: ${errorText}`);
       }
       
       const data = await response.json();
       console.log('Backend response:', data);
+      alert(`Game started successfully with ${selectedPlayersCount} players!`);
       
       // Başarılı gönderimden sonra oyunu sıfırla
       handleRestart();
     } catch (error) {
       console.error('Error submitting game data:', error);
-      alert('Failed to submit game data to server. Please try again.');
+      alert(`Failed to submit game data to server: ${error.message}`);
     } finally {
       setIsSubmitting(false);
     }
