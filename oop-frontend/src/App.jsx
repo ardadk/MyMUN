@@ -6,6 +6,7 @@ import StartScreen from './components/StartScreen';
 import PlayerSelection from './components/PlayerSelection';
 import CountrySelection from './components/CountrySelection';
 import GameSummary from './components/GameSummary';
+import GameScreen from './components/GameScreen';
 
 function App() {
   // Game state
@@ -14,6 +15,7 @@ function App() {
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [playerCountries, setPlayerCountries] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [gameData, setGameData] = useState(null);
 
   // Event handlers
   const handleStartClick = () => {
@@ -44,8 +46,6 @@ function App() {
     }
   };
 
-  // Mevcut handleSubmitToBackend fonksiyonunuz zaten çalışıyor, 
-  // sadece birkaç küçük iyileştirme yapacağız
   const handleSubmitToBackend = async () => {
     setIsSubmitting(true);
     
@@ -74,10 +74,11 @@ function App() {
       
       const data = await response.json();
       console.log('Backend response:', data);
-      alert(`Game started successfully with ${selectedPlayersCount} players!`);
       
-      // Başarılı gönderimden sonra oyunu sıfırla
-      handleRestart();
+      // Oyun verilerini sakla ve oyun ekranına geç
+      setGameData(data);
+      setGameStage("playing");
+      
     } catch (error) {
       console.error('Error submitting game data:', error);
       alert(`Failed to submit game data to server: ${error.message}`);
@@ -91,6 +92,7 @@ function App() {
     setSelectedPlayersCount(1);
     setCurrentPlayerIndex(0);
     setPlayerCountries([]);
+    setGameData(null);
   };
 
   // Render content based on game stage
@@ -126,6 +128,15 @@ function App() {
             onRestart={handleRestart}
             onSubmit={handleSubmitToBackend}
             isSubmitting={isSubmitting}
+          />
+        );
+      
+      case "playing":
+        return (
+          <GameScreen 
+            playerCountries={playerCountries}
+            currentPlayer={currentPlayerIndex}
+            gameData={gameData}
           />
         );
       

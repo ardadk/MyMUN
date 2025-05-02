@@ -5,45 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fd3d6834-c162-4743-b17e-5eeeed841954" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/oop-backend/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/oop-backend/.gitattributes" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-backend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/oop-backend/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-backend/build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-backend/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-backend/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-backend/gradlew" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-backend/gradlew.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-backend/settings.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-backend/src/main/java/project/oop/OopApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-backend/src/main/java/project/oop/controllers/TestController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-backend/src/main/java/project/oop/controllers/getStartInfos.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-backend/src/main/java/project/oop/models/GameStartRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-backend/src/main/java/project/oop/models/startModel.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/oop-backend/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-backend/src/test/java/com/example/demo/DemoApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-backend/src/test/java/project/oop/OopApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/eslint.config.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/public/images/mun-screen.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/public/vite.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/src/App.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/src/App.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/src/assets/react.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/src/components/Card.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/src/components/Header.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/src/components/Map.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/src/components/PlayerList.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/src/components/Scoreboard.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/src/components/StarRating.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/src/components/StartScreen.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/src/index.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/src/main.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/src/pages/HomePage.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/src/services/api.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/oop-frontend/javaProje/vite.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/oop-backend/src/main/java/oop_backend/oop/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/oop-backend/src/main/java/oop_backend/oop/controller/GameController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,9 +17,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 7
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="2voGLKjxMY7NqBz9VdEfL5wcmgX" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -65,6 +29,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.OopApplication.executor": "Run",
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
@@ -72,6 +37,9 @@
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "SDKs",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -101,6 +69,9 @@
       <option name="presentableId" value="Default" />
       <updated>1744803955763</updated>
       <workItem from="1744803957048" duration="172000" />
+      <workItem from="1745444222395" duration="277000" />
+      <workItem from="1745444511391" duration="36000" />
+      <workItem from="1745444555161" duration="95000" />
     </task>
     <servers />
   </component>

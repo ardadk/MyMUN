@@ -1,6 +1,12 @@
 import React from 'react';
 
 const GameSummary = ({ playerCountries, onRestart, onSubmit, isSubmitting }) => {
+  const handleStartGame = async () => {
+    // Submit işlemini gerçekleştir ve başarılı olursa oyunu başlat
+    await onSubmit();
+    // Not: onSubmit fonksiyonu içinde zaten hata yönetimi var
+  };
+
   return (
     <div className="game-container fade-in">
       <h2>Game Setup Complete</h2>
@@ -13,17 +19,13 @@ const GameSummary = ({ playerCountries, onRestart, onSubmit, isSubmitting }) => 
         ))}
       </div>
       
-      <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+      <div style={{ marginTop: "20px" }}>
         <button 
-          onClick={onSubmit}
+          onClick={handleStartGame}
           disabled={isSubmitting}
           style={{ backgroundColor: 'var(--success-color)' }}
         >
-          {isSubmitting ? 'Sending...' : 'Send to Server'}
-        </button>
-        
-        <button onClick={onRestart}>
-          Start New Game
+          {isSubmitting ? 'Starting Game...' : 'Start Game'}
         </button>
       </div>
     </div>
