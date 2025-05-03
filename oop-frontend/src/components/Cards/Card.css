@@ -1,0 +1,11 @@
+.card {
+    padding: 10px;
+    border-radius: 8px;
+    color: white;
+    flex: 1;
+  }
+  
+  .purple { background-color: #9b59b6; }
+  .blue { background-color: #3498db; }
+  .green { background-color: #2ecc71; }
+  .pink { background-color: #f78fb3; }

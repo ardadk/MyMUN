@@ -1,0 +1,10 @@
+/* src/components/GameScreenLayout.css */
+.game-screen { padding: 1rem; }
+.game-layout { display: flex; height: 100%; }
+.game-left-panel,
+.game-right-panel {
+  flex: 1;
+  padding: 0.5rem;
+  overflow-y: auto;
+}
+.game-left-panel { border-right: 2px solid #ccc; }

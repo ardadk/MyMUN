@@ -1,0 +1,35 @@
+/* CountryPage.css */
+.country-page {
+    padding: 1rem;
+  }
+  
+  .back-button {
+    background: var(--surface);
+    border: none;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .info-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .map-and-score-container {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .map-wrapper {
+    flex: 2;
+  }
+  
+  .scoreboard-wrapper {
+    flex: 3;
+    display: flex;
+    align-items: start;
+  }
+  

@@ -1,0 +1,39 @@
+.map-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Seçim ekranı için küçük tile’lar */
+.selection-mode .map-tile {
+  position: relative;
+  margin: 0.5rem;
+  cursor: pointer;
+  width: 120px;
+  height: 80px;
+  overflow: hidden;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+}
+.selection-mode .map-tile .map-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.selection-mode .map-tile .map-label {
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  font-size: 0.8rem;
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+/* Oyun içi single-map modu */
+.map-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
