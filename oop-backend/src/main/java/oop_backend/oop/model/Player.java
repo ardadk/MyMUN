@@ -1,52 +1,32 @@
 package oop_backend.oop.model;
 
 public class Player {
-    private int id;
-    private String name;
-    private String country;
-
-    // Default constructor
+    private String playerId;
+    private String countryName;
+    
     public Player() {
+        // Boş yapıcı (Jackson için)
     }
-
-    // Constructor with fields
-    public Player(int id, String country) {
-        this.id = id;
-        this.name = "Player " + id;
-        this.country = country;
+    
+    public Player(String playerId, String countryName) {
+        this.playerId = playerId;
+        this.countryName = countryName;
     }
-
-    // Getters and setters
-    public int getId() {
-        return id;
+    
+    // Getter ve setter metodları
+    public String getPlayerId() {
+        return playerId;
     }
-
-    public void setId(int id) {
-        this.id = id;
+    
+    public void setPlayerId(String playerId) {
+        this.playerId = playerId;
     }
-
-    public String getName() {
-        return name;
+    
+    public String getCountryName() {
+        return countryName;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    @Override
-    public String toString() {
-        return "Player{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", country='" + country + '\'' +
-                '}';
+    
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
     }
 }
