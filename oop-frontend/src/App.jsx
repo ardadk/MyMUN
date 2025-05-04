@@ -64,51 +64,26 @@ export default function App(){
   const handleSubmitToBackend = async () => {
     setIsSubmitting(true);
     try {
-      // Oyuncuların ID ve ülke bilgilerini hazırla - "player" öneki olmadan sadece sayı
+      // Prepares player data with IDs and country names
       const playerData = playerCountries.map((country, index) => ({
-        playerId: `${index + 1}`, // "player" ön eki kaldırıldı
+        playerId: `${index + 1}`, // Numeric ID without "player" prefix
         countryName: country
       }));
       
       console.log("Backend'e gönderilecek veriler:", playerData);
       
-      // Axios ile backend'e POST isteği gönder
+      // Sends POST request to backend
       const response = await axios.post('http://localhost:8080/api/game/start', {
         players: playerData
       }, {
-        timeout: 5000 // 5 saniyelik zaman aşımı ekleyin
+        timeout: 5000
       });
       
-      console.log("Backend'den dönen cevap:", response.data);
-      
-      // Başarılı cevap
-      console.log("Oyun başlatıldı:", response.data);
-      
-      // Backend'den gelen game data'yı işle
+      // Processes response from backend
       const gameData = response.data.gameData;
+      // ... state updates with response data ...
       
-      setCountryPolicies(gameData.countryPolicies);
-      setEconScores(gameData.econScores);
-      setWelfareScores(gameData.welfareScores);
-      setGlobalProblem(gameData.globalProblem);
-      setMessageSteps(gameData.messageSteps || {});
-      setChatOptionsMap(gameData.chatOptions || {});
-      
-      // Skor ve oylama state'lerini başlat
-      setScores(
-        playerCountries.reduce((a,c)=>( {...a,[c]:0} ),{})
-      );
-      setVoteCounts(
-        playerCountries.reduce((a,c)=>( {...a,[c]:0} ),{})
-      );
-      setChatMessages([]);
-      
-      // Oyunu başlat
       setGameStage("playing");
-      setCurrentCountryIndex(0);
-      setIsScoringPhase(false);
-      setScoreTurnIndex(0);
-      setViewCountry(null);
     } catch (error) {
       console.error("Oyun başlatma hatası:", error.response?.data || error.message);
     } finally {

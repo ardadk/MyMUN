@@ -1,92 +1,38 @@
 package oop_backend.oop.controller;
 
-import oop_backend.oop.model.Game;
-import oop_backend.oop.model.Player;
-import oop_backend.oop.model.GameData;
-import oop_backend.oop.model.ChatOption;
-import oop_backend.oop.service.GameService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.List;
+import oop_backend.oop.model.GameStartRequest;
+import oop_backend.oop.service.GameService;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/game")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*") // Frontend ile iletişim için CORS ayarları
 public class GameController {
-    
-    private final Map<String, Game> activeGames = new HashMap<>();
-    
-    @Autowired
-    private GameService gameService;
+
+    private final GameService gameService;
+
+    public GameController(GameService gameService) {
+        this.gameService = gameService;
+    }
 
     @PostMapping("/start")
-    public Map<String, Object> startGame(@RequestBody StartGameRequest request) {
-        System.out.println("Oyun başlatma isteği alındı!"); // Log ekle
+    public ResponseEntity<?> startGame(@RequestBody GameStartRequest request) {
         try {
-            // Oyuncuları oluştur
-            gameService.initializeGame(request.getPlayers()
-                .stream()
-                .map(player -> {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("playerId", player.getPlayerId());
-                    map.put("countryName", player.getCountryName());
-                    
-                    // Gelen verileri logla
-                    System.out.println("Player ID: " + player.getPlayerId() + 
-                                       ", Country: " + player.getCountryName());
-                    
-                    return map;
-                })
-                .toList());
-            
-            // Oyun verilerini al
-            GameData gameData = gameService.getGameData();
-            
-            // Yeni oyun nesnesi oluştur ve aktif oyunlara ekle
-            Game game = new Game(gameService.getPlayers());
-            activeGames.put(game.getGameId(), game);
-            
-            // Game ID'yi logla
-            System.out.println("Yeni oyun başlatıldı: " + game.getGameId());
-            System.out.println("Aktif oyun sayısı: " + activeGames.size());
-            
-            // Seçilen global problemi logla
-            System.out.println("Global Problem: " + gameData.getGlobalProblem());
-            
-            // Oyun durumu ve verilerini döndür
-            Map<String, Object> response = new HashMap<>();
-            response.put("gameId", game.getGameId());
-            response.put("players", gameService.getPlayers());
-            response.put("gameData", gameData);
-            
-            return response;
+            // Oyunu başlat ve sonuç döndür
+            gameService.startGame(request.getPlayers());
+            return ResponseEntity.ok().body(
+                Map.of(
+                    "success", true, 
+                    "message", "Oyun başlatıldı!",
+                    "gameData", Map.of("status", "active")
+                )
+            );
         } catch (Exception e) {
-            // Hataları logla
-            System.err.println("Oyun başlatma hatası: " + e.getMessage());
-            e.printStackTrace();
-            throw e; // Hatayı yeniden fırlat
-        }
-    }
-    
-    @GetMapping("/options/{step}")
-    public List<ChatOption> getChatOptions(@PathVariable String step) {
-        System.out.println("Adım için seçenek talebi: " + step);
-        return gameService.getChatOptionsForStep(step);
-    }
-    
-    // İstek için veri sınıfı
-    static class StartGameRequest {
-        private List<Player> players;
-        
-        public List<Player> getPlayers() {
-            return players;
-        }
-        
-        public void setPlayers(List<Player> players) {
-            this.players = players;
+            return ResponseEntity.badRequest().body(
+                Map.of("success", false, "message", "Oyun başlatılamadı: " + e.getMessage())
+            );
         }
     }
 }
