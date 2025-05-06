@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/game")
-@CrossOrigin(origins = "*") // Frontend ile iletişim için CORS ayarları
+@CrossOrigin(origins = "http://localhost:5173") // Sadece frontend URL'sine izin ver
 public class GameController {
 
     private final GameService gameService;
