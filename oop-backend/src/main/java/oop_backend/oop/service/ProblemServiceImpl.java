@@ -16,6 +16,7 @@ public class ProblemServiceImpl implements ProblemService {
         this.problems = initializeProblems();
         this.optionsByStep = initializeOptions();
         this.random = new Random();
+        System.out.println("optionsByStep içeriği: " + optionsByStep);
     }
     
     @Override
@@ -23,7 +24,24 @@ public class ProblemServiceImpl implements ProblemService {
         if (problems.isEmpty()) {
             throw new IllegalStateException("Hiçbir dünya problemi tanımlanmamış!");
         }
-        return problems.get(random.nextInt(problems.size()));
+        
+        int randomIndex = random.nextInt(problems.size());
+        WorldProblem selectedProblem = problems.get(randomIndex);
+        
+        // Seçilen problem bilgisi log'a yazılıyor
+        System.out.println("Rastgele seçilen problem: " + selectedProblem.getDescription() + 
+                " (ID: " + selectedProblem.getId() + ")");
+        
+        if (selectedProblem.getOptions() == null || selectedProblem.getOptions().isEmpty()) {
+            System.out.println("UYARI: Bu problemin seçenekleri yok!");
+        } else {
+            System.out.println("Bu problemin " + selectedProblem.getOptions().size() + " seçeneği var:");
+            for (ProblemOption option : selectedProblem.getOptions()) {
+                System.out.println(" - " + option.getText() + " (ID: " + option.getId() + ")");
+            }
+        }
+        
+        return selectedProblem;
     }
     
     @Override
@@ -40,7 +58,10 @@ public class ProblemServiceImpl implements ProblemService {
     
     @Override
     public List<ProblemOption> getOptionsForStep(String step) {
-        return optionsByStep.getOrDefault(step, Collections.emptyList());
+        System.out.println("Alınan step: " + step);
+        List<ProblemOption> options = optionsByStep.getOrDefault(step, Collections.emptyList());
+        System.out.println("Dönen seçenekler: " + options);
+        return options;
     }
     
     // Problemleri başlangıç değerleriyle doldur
@@ -94,7 +115,33 @@ public class ProblemServiceImpl implements ProblemService {
         waterExport.add(new ProblemOption("we2", "Su satışından elde edilen geliri altyapı yatırımlarına yönlendir", "water_end", 3, 0));
         options.put("water_export", waterExport);
         
-        // Benzer şekilde diğer problemler için de sonraki adımları tanımlayabilirsiniz
+        // water_end için de seçenekler ekle (bu adım eksikti)
+        List<ProblemOption> waterEnd = new ArrayList<>();
+        waterEnd.add(new ProblemOption("wend1", "Sonraki tura geç", "start", 0, 0));
+        options.put("water_end", waterEnd);
+        
+        // Küresel ısınma sonraki adımları
+        List<ProblemOption> climateLaws = new ArrayList<>();
+        climateLaws.add(new ProblemOption("cl1", "Karbon emisyonlarını azaltmaya devam et", "climate_end", -1, 2));
+        climateLaws.add(new ProblemOption("cl2", "Yeşil enerji projelerini hızlandır", "climate_end", 2, 1));
+        options.put("climate_laws", climateLaws);
+
+        List<ProblemOption> greenTech = new ArrayList<>();
+        greenTech.add(new ProblemOption("gt1", "Yeşil enerji projelerine daha fazla yatırım yap", "green_end", 2, 2));
+        greenTech.add(new ProblemOption("gt2", "Yeşil enerji projelerini durdur ve fosil yakıtlara dön", "green_end", -2, -2));
+        options.put("green_tech", greenTech);
+        
+        // Diğer adımlar için seçenekler...
+        
+        // Son adım seçenekleri için sonlandırma bildirimi
+        List<ProblemOption> endOptions = new ArrayList<>();
+        endOptions.add(new ProblemOption("end1", "Sonraki tura geç", "start", 0, 0));
+        
+        // Tüm end adımları için varsayılan seçenekleri ekle
+        options.put("climate_end", endOptions);
+        options.put("economy_end", endOptions);
+        options.put("pandemic_end", endOptions);
+        options.put("cyber_end", endOptions);
         
         return options;
     }

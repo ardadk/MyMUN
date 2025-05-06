@@ -66,7 +66,7 @@ export default function App(){
     try {
       // Oyuncu verilerini hazırla
       const playerData = playerCountries.map((country, index) => ({
-        playerId: `${index + 1}`,
+        userId: index + 1,
         countryName: country
       }));
       
@@ -94,6 +94,9 @@ export default function App(){
           start: response.data.gameData.options
         });
         
+        // Oyuncuların bilgilerini backend'den al
+        const backendPlayers = response.data.gameData.players;
+        
         // Ekonomi ve refah skorlarını başlangıç değerleriyle doldur
         const initialEconScores = {};
         const initialWelfareScores = {};
@@ -101,11 +104,12 @@ export default function App(){
         const initialScores = {};
         const initialVotes = {};
         
-        playerCountries.forEach(country => {
+        backendPlayers.forEach(player => {
+          const country = player.countryName;
           initialEconScores[country] = 50; // Başlangıç değeri
           initialWelfareScores[country] = 50; // Başlangıç değeri
-          initialPolicies[country] = "Standart"; // Başlangıç değeri
-          initialScores[country] = 0;
+          initialPolicies[country] = player.policy; // Backend'den gelen politikayı kullan
+          initialScores[country] = player.rating;
           initialVotes[country] = 0;
         });
         
@@ -155,10 +159,19 @@ export default function App(){
 
   // --- oynama akışı handler'ları ---
   const handleOptionSelect = async (opt) => {
+    if (!opt) {
+      console.error("Geçersiz seçenek seçildi:", opt);
+      return;
+    }
+    
+    console.log("Seçilen seçenek:", opt);
     const cc = playerCountries[currentCountryIndex];
     
     // Seçeneği sohbet mesajlarına ekle
     setChatMessages(m => [...m,{country:cc,text:opt.text}]);
+    
+    console.log(`${cc} için ekonomi skoru: ${econScores[cc]} + ${opt.economyEffect * 10}`);
+    console.log(`${cc} için refah skoru: ${welfareScores[cc]} + ${opt.welfareEffect * 10}`);
     
     // Ekonomi ve refah skorlarını güncelle
     setEconScores(prev => ({
@@ -173,32 +186,67 @@ export default function App(){
     
     // Seçilen seçeneğin next değerine göre messageSteps'i güncelle
     const nextStep = opt.next || "start";
+    console.log(`Sonraki adım: ${nextStep}`);
     setMessageSteps(ms => ({ ...ms, [cc]: nextStep }));
     
     // Sonraki adım seçeneklerini backend'den al
     try {
-      const response = await axios.get(`http://localhost:8080/api/game/options/${nextStep}`);
-      if (response.data && response.data.length > 0) {
-        // Sadece veri varsa güncelle
-        setChatOptionsMap(prev => ({ ...prev, [nextStep]: response.data }));
+      console.log(`${nextStep} için seçenekler alınıyor...`);
+      
+      // Eğer zaten bu adımın seçenekleri yüklüyse, tekrar isteme
+      if (chatOptionsMap[nextStep] && chatOptionsMap[nextStep].length > 0) {
+        console.log(`${nextStep} için seçenekler zaten yüklü:`, chatOptionsMap[nextStep]);
       } else {
-        console.log(`${nextStep} için seçenek bulunamadı`);
+        const response = await axios.get(`http://localhost:8080/api/game/options/${nextStep}`);
+        console.log(`${nextStep} için alınan seçenekler:`, response.data);
+        
+        if (response.data && response.data.length > 0) {
+          // Sadece veri varsa güncelle
+          setChatOptionsMap(prev => ({ ...prev, [nextStep]: response.data }));
+        } else {
+          console.warn(`${nextStep} için seçenek bulunamadı`);
+          // Varsayılan bir seçenek ekle
+          setChatOptionsMap(prev => ({ 
+            ...prev, 
+            [nextStep]: [{
+              id: "default",
+              text: "Sonraki tura geç",
+              next: "start",
+              economyEffect: 0,
+              welfareEffect: 0
+            }]
+          }));
+        }
       }
     } catch (error) {
       console.error(`${nextStep} için seçenekler alınamadı:`, error);
+      
+      // Hata durumunda varsayılan seçenek ekle
+      setChatOptionsMap(prev => ({ 
+        ...prev, 
+        [nextStep]: [{
+          id: "error",
+          text: "Bir hata oluştu, sonraki tura geç",
+          next: "start",
+          economyEffect: 0,
+          welfareEffect: 0
+        }]
+      }));
     }
     
     // Sıradaki ülkeye geç
     const nextIdx = (currentCountryIndex + 1) % playerCountries.length;
+    console.log(`Sıra ${playerCountries[nextIdx]}'ye geçiyor`);
     setCurrentCountryIndex(nextIdx);
     
     // Bir tur tamamlandıysa puanlama aşamasına geç
     if (nextIdx === 0) {
+      console.log("Tur tamamlandı, puanlama aşamasına geçiliyor");
       setIsScoringPhase(true);
     }
   };
 
-  const handleVoteSubmit = votes => {
+  const handleVoteSubmit = async (votes) => {
     const voter = playerCountries[scoreTurnIndex];
     const newScores = {...scores}, newCounts={...voteCounts};
     
@@ -213,9 +261,48 @@ export default function App(){
     if (scoreTurnIndex < playerCountries.length-1) {
       setScoreTurnIndex(i => i+1);
     } else {
+      // Tüm oyuncular oy verdi, yeni tura geç
       setIsScoringPhase(false);
       setScoreTurnIndex(0);
       setCurrentCountryIndex(0);
+      
+      console.log("Tur tamamlandı, yeni problem alınıyor...");
+      
+      try {
+        // Yeni bir problem al
+        const response = await axios.get(`http://localhost:8080/api/game/problem/next/${gameId}`);
+        console.log("Backend'den gelen yanıt:", response.data);
+        
+        if (response.data && response.data.description) {
+          // Yeni problemin açıklamasını kaydet
+          setGlobalProblem(response.data.description);
+          
+          // Seçenekler dizisini kontrol et
+          if (response.data.options && Array.isArray(response.data.options) && response.data.options.length > 0) {
+            console.log("Yeni seçenekler alındı:", response.data.options);
+            
+            // Tüm önceki adımları ve seçenekleri temizle, sadece yeni başlangıç seçeneklerini ekle
+            setChatOptionsMap({
+              start: response.data.options
+            });
+            
+            // Adım takibini sıfırla
+            setMessageSteps({});
+            
+            // Mesaj geçmişini sıfırla
+            setChatMessages([]);
+            
+            console.log("Yeni problem ayarlandı:", response.data.description);
+            console.log("Yeni seçenekler ayarlandı:", response.data.options);
+          } else {
+            console.error("Yeni problem için seçenekler eksik veya boş:", response.data);
+          }
+        } else {
+          console.error("Yeni problem alınamadı veya geçerli değil:", response.data);
+        }
+      } catch (error) {
+        console.error("Yeni problem alınamadı:", error.response?.data || error.message);
+      }
     }
   };
 
