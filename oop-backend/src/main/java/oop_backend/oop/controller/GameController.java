@@ -27,6 +27,7 @@ public class GameController {
     private final PolicyService policyService;
     private Map<String, String> gameIdBySession = new HashMap<>();
     private Map<String, List<Player>> gamePlayerMap = new HashMap<>();
+    private int counter = 1; // Counter değişkeni tanımlandı
 
     public GameController(GameService gameService, ProblemService problemService, PolicyService policyService) {
         this.gameService = gameService;
@@ -145,74 +146,58 @@ public class GameController {
     @GetMapping("/problem/next/{gameId}")
     public ResponseEntity<?> getNextProblem(@PathVariable String gameId) {
         try {
+            // Counter'ı artır
+            counter++;
+            System.out.println("Counter değeri: " + counter);
+
+            // Counter 3 olduğunda kullanıcıyı game-over URL'sine yönlendir
+            if (counter == 3) {
+                return ResponseEntity.status(302) // 302 Found (Redirect)
+                        .header("Location", "/game-over")
+                        .build();
+            }
+
             // Bir önceki problemden farklı yeni bir problem seç
             WorldProblem currentProblem = gameService.getCurrentProblem(gameId);
             WorldProblem newProblem = null;
-            if (newProblem == null) {
-                System.out.println("UYARI: Mevcut problem bulunamadı, yeni problem seçiliyor...");
-            }
-            
-            // Mevcut problemi konsola yazdır
-            System.out.println("Mevcut problem: " + (currentProblem != null ? 
-                    currentProblem.getDescription() + " (ID: " + currentProblem.getId() + ")" : "Yok"));
-            
+
             // Tüm problemleri al
             List<WorldProblem> allProblems = problemService.getAllProblems();
-            System.out.println("Toplam problem sayısı: " + allProblems.size());
-            
-            // Problemlerin sayısı 1'den fazlaysa, mevcut problemden farklı bir tane seç
+
             if (allProblems.size() > 1 && currentProblem != null) {
-                // Mevcut problem ID'sini dışlayarak rastgele bir problem seç
                 List<WorldProblem> otherProblems = allProblems.stream()
                         .filter(p -> !p.getId().equals(currentProblem.getId()))
                         .collect(Collectors.toList());
-                
-                // Başka problemlerin olduğundan emin ol
-                if (otherProblems.isEmpty()) {
-                    // Hiç uygun problem yoksa, rastgele bir problem seç
-                    newProblem = problemService.selectRandomProblem();
-                } else {
-                    // Rastgele bir problem seç
+
+                if (!otherProblems.isEmpty()) {
                     int randomIndex = new Random().nextInt(otherProblems.size());
                     newProblem = otherProblems.get(randomIndex);
                 }
             } else {
-                // Tek problem varsa veya mevcut problem null ise, rastgele bir problem seç
                 newProblem = problemService.selectRandomProblem();
             }
-            
+
             if (newProblem == null) {
                 return ResponseEntity.badRequest().body(
-                    Map.of("success", false, "message", "Yeni problem seçilemedi")
+                        Map.of("success", false, "message", "Yeni problem seçilemedi")
                 );
             }
-            
-            // Seçenekleri kontrol et
-            if (newProblem.getOptions() == null || newProblem.getOptions().isEmpty()) {
-                System.out.println("UYARI: Seçilen problemin seçenekleri yok!");
-            } else {
-                System.out.println("Seçilen problem için " + newProblem.getOptions().size() + " seçenek var");
-                for (ProblemOption option : newProblem.getOptions()) {
-                    System.out.println("  - " + option.getText());
-                }
-            }
-            
-            // Oyun kaydındaki problemi güncelle
+
             gameService.updateGameProblem(gameId, newProblem);
-            
-            // Detaylı log kaydı
-            System.out.println("\n🔄 YENİ PROBLEM SEÇİLDİ 🔄");
-            System.out.println("Önceki problem: " + (currentProblem != null ? 
-                    currentProblem.getDescription() + " (ID: " + currentProblem.getId() + ")" : "İlk problem"));
-            System.out.println("Yeni problem: " + newProblem.getDescription() + " (ID: " + newProblem.getId() + ")");
-            
+
             return ResponseEntity.ok().body(newProblem);
         } catch (Exception e) {
-            e.printStackTrace(); // Hata izlemesi için
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(
-                Map.of("success", false, "message", "Sonraki problem alınamadı: " + e.getMessage())
+                    Map.of("success", false, "message", "Sonraki problem alınamadı: " + e.getMessage())
             );
         }
+    }
+
+    @GetMapping("/game-over")
+    @CrossOrigin(origins = "*") // Tüm kaynaklara izin ver
+    public ResponseEntity<String> gameOver() {
+        return ResponseEntity.ok("<h1>Game Over</h1>");
     }
     
     @GetMapping("/players/{gameId}")
@@ -259,4 +244,6 @@ public class GameController {
             );
         }
     }
+    
+    // Removed duplicate method definition to resolve the compile error.
 }

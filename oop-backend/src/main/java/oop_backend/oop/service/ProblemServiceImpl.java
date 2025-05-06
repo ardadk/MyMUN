@@ -16,6 +16,7 @@ public class ProblemServiceImpl implements ProblemService {
         this.problems = initializeProblems();
         this.optionsByStep = initializeOptions();
         this.random = new Random();
+        System.out.println("optionsByStep içeriği: " + optionsByStep);
     }
     
     @Override
@@ -57,49 +58,10 @@ public class ProblemServiceImpl implements ProblemService {
     
     @Override
     public List<ProblemOption> getOptionsForStep(String step) {
-        try {
-            System.out.println("İstenen adım için seçenekler alınıyor: " + step);
-            
-            // step null ise veya boşsa varsayılan olarak "start" adımını kullan
-            if (step == null || step.trim().isEmpty()) {
-                System.out.println("Boş adım isteği, varsayılan 'start' adımı kullanılacak");
-                step = "start";
-            }
-            
-            List<ProblemOption> options = optionsByStep.get(step);
-            
-            if (options == null || options.isEmpty()) {
-                System.out.println("UYARI: '" + step + "' adımı için seçenek bulunamadı! Varsayılan seçenekler döndürülüyor.");
-                
-                // Adım bulunamadıysa varsayılan "end" seçeneği döndür
-                List<ProblemOption> defaultOptions = new ArrayList<>();
-                defaultOptions.add(new ProblemOption(
-                    "default_end",
-                    "Sonraki tura geç",
-                    "start",
-                    0,
-                    0
-                ));
-                return defaultOptions;
-            }
-            
-            System.out.println("'" + step + "' adımı için " + options.size() + " seçenek bulundu");
-            return options;
-        } catch (Exception e) {
-            System.err.println("Adım seçeneklerini alırken hata: " + e.getMessage());
-            e.printStackTrace();
-            
-            // Hata durumunda boş liste yerine varsayılan seçenekler döndür
-            List<ProblemOption> fallbackOptions = new ArrayList<>();
-            fallbackOptions.add(new ProblemOption(
-                "error_fallback",
-                "Hata oluştu, sonraki tura geç",
-                "start",
-                0,
-                0
-            ));
-            return fallbackOptions;
-        }
+        System.out.println("Alınan step: " + step);
+        List<ProblemOption> options = optionsByStep.getOrDefault(step, Collections.emptyList());
+        System.out.println("Dönen seçenekler: " + options);
+        return options;
     }
     
     // Problemleri başlangıç değerleriyle doldur
@@ -157,6 +119,17 @@ public class ProblemServiceImpl implements ProblemService {
         List<ProblemOption> waterEnd = new ArrayList<>();
         waterEnd.add(new ProblemOption("wend1", "Sonraki tura geç", "start", 0, 0));
         options.put("water_end", waterEnd);
+        
+        // Küresel ısınma sonraki adımları
+        List<ProblemOption> climateLaws = new ArrayList<>();
+        climateLaws.add(new ProblemOption("cl1", "Karbon emisyonlarını azaltmaya devam et", "climate_end", -1, 2));
+        climateLaws.add(new ProblemOption("cl2", "Yeşil enerji projelerini hızlandır", "climate_end", 2, 1));
+        options.put("climate_laws", climateLaws);
+
+        List<ProblemOption> greenTech = new ArrayList<>();
+        greenTech.add(new ProblemOption("gt1", "Yeşil enerji projelerine daha fazla yatırım yap", "green_end", 2, 2));
+        greenTech.add(new ProblemOption("gt2", "Yeşil enerji projelerini durdur ve fosil yakıtlara dön", "green_end", -2, -2));
+        options.put("green_tech", greenTech);
         
         // Diğer adımlar için seçenekler...
         
