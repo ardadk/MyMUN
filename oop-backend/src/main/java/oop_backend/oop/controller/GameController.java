@@ -84,7 +84,7 @@ public class GameController {
     }
     
     @GetMapping("/options/{step}")
-    public ResponseEntity<?> getOptionsForStep(@PathVariable String step) {
+    public ResponseEntity<?> getOptionsForStep(@PathVariable("step") String step) {
         try {
             System.out.println("'" + step + "' adımı için seçenekler istendi");
             
@@ -128,7 +128,7 @@ public class GameController {
     }
     
     @GetMapping("/problem/{gameId}")
-    public ResponseEntity<?> getCurrentProblem(@PathVariable String gameId) {
+    public ResponseEntity<?> getCurrentProblem(@PathVariable("gameId") String gameId) {
         try {
             WorldProblem problem = gameService.getCurrentProblem(gameId);
             if (problem != null) {
@@ -144,7 +144,7 @@ public class GameController {
     }
     
     @GetMapping("/problem/next/{gameId}")
-    public ResponseEntity<?> getNextProblem(@PathVariable String gameId) {
+    public ResponseEntity<?> getNextProblem(@PathVariable("gameId") String gameId) {
         try {
             // Counter'ı artır
             counter++;
@@ -201,7 +201,7 @@ public class GameController {
     }
     
     @GetMapping("/players/{gameId}")
-    public ResponseEntity<?> getGamePlayers(@PathVariable String gameId) {
+    public ResponseEntity<?> getGamePlayers(@PathVariable("gameId") String gameId) {
         List<Player> players = gamePlayerMap.get(gameId);
         if (players != null) {
             return ResponseEntity.ok().body(players);

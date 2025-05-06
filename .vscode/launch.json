@@ -9,6 +9,13 @@
             "name": "OopApplication",
             "request": "launch",
             "mainClass": "oop_backend.oop.OopApplication",
+            "projectName": "oop"
+        },
+        {
+            "type": "java",
+            "name": "OopApplication",
+            "request": "launch",
+            "mainClass": "oop_backend.oop.OopApplication",
             "projectName": "demo-oop-backend"
         },
         {
