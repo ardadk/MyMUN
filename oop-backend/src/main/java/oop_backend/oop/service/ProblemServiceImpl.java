@@ -23,7 +23,24 @@ public class ProblemServiceImpl implements ProblemService {
         if (problems.isEmpty()) {
             throw new IllegalStateException("Hiçbir dünya problemi tanımlanmamış!");
         }
-        return problems.get(random.nextInt(problems.size()));
+        
+        int randomIndex = random.nextInt(problems.size());
+        WorldProblem selectedProblem = problems.get(randomIndex);
+        
+        // Seçilen problem bilgisi log'a yazılıyor
+        System.out.println("Rastgele seçilen problem: " + selectedProblem.getDescription() + 
+                " (ID: " + selectedProblem.getId() + ")");
+        
+        if (selectedProblem.getOptions() == null || selectedProblem.getOptions().isEmpty()) {
+            System.out.println("UYARI: Bu problemin seçenekleri yok!");
+        } else {
+            System.out.println("Bu problemin " + selectedProblem.getOptions().size() + " seçeneği var:");
+            for (ProblemOption option : selectedProblem.getOptions()) {
+                System.out.println(" - " + option.getText() + " (ID: " + option.getId() + ")");
+            }
+        }
+        
+        return selectedProblem;
     }
     
     @Override
@@ -40,7 +57,49 @@ public class ProblemServiceImpl implements ProblemService {
     
     @Override
     public List<ProblemOption> getOptionsForStep(String step) {
-        return optionsByStep.getOrDefault(step, Collections.emptyList());
+        try {
+            System.out.println("İstenen adım için seçenekler alınıyor: " + step);
+            
+            // step null ise veya boşsa varsayılan olarak "start" adımını kullan
+            if (step == null || step.trim().isEmpty()) {
+                System.out.println("Boş adım isteği, varsayılan 'start' adımı kullanılacak");
+                step = "start";
+            }
+            
+            List<ProblemOption> options = optionsByStep.get(step);
+            
+            if (options == null || options.isEmpty()) {
+                System.out.println("UYARI: '" + step + "' adımı için seçenek bulunamadı! Varsayılan seçenekler döndürülüyor.");
+                
+                // Adım bulunamadıysa varsayılan "end" seçeneği döndür
+                List<ProblemOption> defaultOptions = new ArrayList<>();
+                defaultOptions.add(new ProblemOption(
+                    "default_end",
+                    "Sonraki tura geç",
+                    "start",
+                    0,
+                    0
+                ));
+                return defaultOptions;
+            }
+            
+            System.out.println("'" + step + "' adımı için " + options.size() + " seçenek bulundu");
+            return options;
+        } catch (Exception e) {
+            System.err.println("Adım seçeneklerini alırken hata: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Hata durumunda boş liste yerine varsayılan seçenekler döndür
+            List<ProblemOption> fallbackOptions = new ArrayList<>();
+            fallbackOptions.add(new ProblemOption(
+                "error_fallback",
+                "Hata oluştu, sonraki tura geç",
+                "start",
+                0,
+                0
+            ));
+            return fallbackOptions;
+        }
     }
     
     // Problemleri başlangıç değerleriyle doldur
@@ -94,7 +153,22 @@ public class ProblemServiceImpl implements ProblemService {
         waterExport.add(new ProblemOption("we2", "Su satışından elde edilen geliri altyapı yatırımlarına yönlendir", "water_end", 3, 0));
         options.put("water_export", waterExport);
         
-        // Benzer şekilde diğer problemler için de sonraki adımları tanımlayabilirsiniz
+        // water_end için de seçenekler ekle (bu adım eksikti)
+        List<ProblemOption> waterEnd = new ArrayList<>();
+        waterEnd.add(new ProblemOption("wend1", "Sonraki tura geç", "start", 0, 0));
+        options.put("water_end", waterEnd);
+        
+        // Diğer adımlar için seçenekler...
+        
+        // Son adım seçenekleri için sonlandırma bildirimi
+        List<ProblemOption> endOptions = new ArrayList<>();
+        endOptions.add(new ProblemOption("end1", "Sonraki tura geç", "start", 0, 0));
+        
+        // Tüm end adımları için varsayılan seçenekleri ekle
+        options.put("climate_end", endOptions);
+        options.put("economy_end", endOptions);
+        options.put("pandemic_end", endOptions);
+        options.put("cyber_end", endOptions);
         
         return options;
     }
