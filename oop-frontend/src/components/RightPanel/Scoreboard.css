@@ -1,26 +1,28 @@
 .scoreboard {
-    flex: 1;
-    padding: 10px;
-    background-color: #f4f4f4;
-    border-radius: 8px;
-  }
-  
-  .scoreboard ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .scoreboard li {
-    padding: 5px 10px;
-    margin: 5px 0;
-    border-radius: 4px;
-    color: white;
-    font-weight: bold;
-  }
-  
-  .a { background-color: #2ecc71; }
-  .b { background-color: #f78fb3; }
-  .c { background-color: #1abc9c; }
-  .d { background-color: #9b59b6; }
-  .e { background-color: #3498db; }
-  
+  flex: 1;
+  padding: 10px;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+}
+
+.scoreboard ul {
+  list-style: none;
+  padding: 0;
+}
+
+.scoreboard li {
+  padding: 5px 10px;
+  margin: 5px 0;
+  border-radius: 4px;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* A–E tüm puan satırları için aynı gradient’i uyguluyoruz */
+.scoreboard li.a,
+.scoreboard li.b,
+.scoreboard li.c,
+.scoreboard li.d,
+.scoreboard li.e {
+  background: linear-gradient(135deg, #4b7bec 0%,  #663399 100%);
+}

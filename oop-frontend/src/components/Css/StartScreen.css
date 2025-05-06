@@ -1,0 +1,48 @@
+.start-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  box-sizing: border-box;
+  background: linear-gradient(360deg, #e0e7ff 0%, #f0fff4 100%);
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  text-align: center;
+}
+
+.mun-logo {
+  width: 800px;
+  max-width: 50%;
+  margin-bottom: 1.5rem;
+}
+
+.start-screen h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 2rem;
+}
+
+.start-screen button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border: none;
+  border-radius: 9999px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.1s, background 0.2s;
+}
+
+.start-screen button:hover {
+  background: linear-gradient(90deg, #5a67d8, #663399);
+  transform: translateY(-1px);
+}
+
+.start-screen button:active {
+  background: linear-gradient(90deg, #4c51bf, #5a189a);
+  transform: translateY(0);
+}

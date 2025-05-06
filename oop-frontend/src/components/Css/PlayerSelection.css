@@ -1,0 +1,72 @@
+/* src/components/PlayerSelection.css */
+
+.player-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e0e7ff 0%, #f0fff4 100%);
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  .player-selection h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 2rem;
+  }
+  
+  .selection-container {
+    width: 100%;
+    max-width: 240px;
+    margin-bottom: 2rem;
+  }
+  
+  .selection-container select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border-radius: 9999px;
+    border: 1px solid #cbd5e0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D'10'%20height%3D'6'%20viewBox%3D'0%200%2010%206'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%3E%3Cpath%20d%3D'M0%200l5%206%205-6z'%20fill%3D'%23667eea'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+  }
+  
+  .selection-container select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102,126,234,0.3);
+  }
+  
+  .player-selection button {
+    width: 100%;
+    max-width: 240px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border: none;
+    border-radius: 9999px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.1s, background 0.2s;
+  }
+  
+  .player-selection button:hover {
+    background: linear-gradient(90deg, #5a67d8, #663399);
+    transform: translateY(-1px);
+  }
+  
+  .player-selection button:active {
+    background: linear-gradient(90deg, #4c51bf, #5a189a);
+    transform: translateY(0);
+  }
+  

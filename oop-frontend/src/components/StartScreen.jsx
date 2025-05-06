@@ -1,12 +1,19 @@
+// src/components/StartScreen.jsx
 import React from 'react';
+import './Css/StartScreen.css';
 
-const StartScreen = ({ onStart }) => {
+export default function StartScreen({ onStart }) {
   return (
-    <div className="game-container fade-in">
-      <h1>Country Selection Game</h1>
-      <button onClick={onStart}>Start</button>
+    <div className="start-screen">
+      {/* MUN logosunu ekliyoruz */}
+      <img
+        src="/mun-logo.png"
+        alt="MUN Logo"
+        className="mun-logo"
+      />
+
+      <h1>MyMUN</h1>
+      <button onClick={onStart}>Başla</button>
     </div>
   );
-};
-
-export default StartScreen;
+}

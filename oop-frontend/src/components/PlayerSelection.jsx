@@ -1,26 +1,21 @@
-import React from 'react';
+// src/components/PlayerSelection.jsx
+import './Css/PlayerSelection.css';
 
-const PlayerSelection = ({ selectedCount, onCountChange, onContinue }) => {
-  const players = [1, 2, 3, 4, 5];
-  
+export default function PlayerSelection({ selectedCount, onCountChange, onContinue }) {
   return (
-    <div className="game-container fade-in">
-      <h2>Select Number of Players</h2>
+    <div className="player-selection">
+     <h2>Oyuncu Sayısını Seçiniz.</h2>
       <div className="selection-container">
         <select
           value={selectedCount}
           onChange={(e) => onCountChange(parseInt(e.target.value))}
         >
-          {players.map((player) => (
-            <option key={player} value={player}>
-              {player}
-            </option>
+          {[1,2,3,4,5].map(n => (
+            <option key={n} value={n}>{n}</option>
           ))}
         </select>
       </div>
-      <button onClick={onContinue}>Continue</button>
+      <button onClick={onContinue}>Devam</button>
     </div>
   );
-};
-
-export default PlayerSelection;
+}

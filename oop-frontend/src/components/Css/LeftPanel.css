@@ -1,0 +1,22 @@
+.country-buttons-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 140px; /* ekran görüntüsündeki genişlik */
+}
+
+.country-button {
+  /* görseldeki kutucuklardaki mavi-mor geçişli degrade */
+  background: linear-gradient(90deg, #5a67d8 0%,  #663399 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform .1s;
+}
+
+.country-button:hover {
+  transform: scale(1.05);
+}

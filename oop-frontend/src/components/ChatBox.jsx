@@ -1,4 +1,4 @@
-import './ChatBox.css';
+import './Css/ChatBox.css';
 
 const ChatBox = ({ messages }) => {
   return (

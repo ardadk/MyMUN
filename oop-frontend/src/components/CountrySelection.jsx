@@ -1,4 +1,5 @@
 import React from 'react';
+import './Css/CountrySelection.css';
 
 const CountrySelection = ({ 
   playerIndex, 
@@ -10,15 +11,15 @@ const CountrySelection = ({
   const countries = ["A", "B", "C", "D", "E"];
   
   return (
-    <div className="game-container fade-in">
-      <h2>Player {playerIndex + 1} - Select a Country</h2>
+    <div className="country-selection">
+      <h2>Oyuncu {playerIndex + 1} - Bir Ülke Seçin.</h2>
       <div className="selection-container">
         <select
           value={selectedCountry}
           onChange={(e) => onCountryChange(e.target.value)}
         >
           <option value="" disabled>
-            Choose a country
+            Bir Ülke Seçin.
           </option>
           {countries.map((country) => (
             <option 
@@ -35,7 +36,7 @@ const CountrySelection = ({
         onClick={onNext}
         disabled={!selectedCountry}
       >
-        Next
+        Sıradaki
       </button>
     </div>
   );

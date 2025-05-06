@@ -1,5 +1,5 @@
 import React from 'react';
-import './LeftPanel.css';
+import './Css/LeftPanel.css';
 
 export default function LeftPanel({ playerCountries, onCountrySelect }) {
   return (

@@ -1,6 +1,6 @@
 // src/components/GameScreenLayout.jsx
 import React from 'react';
-import './GameScreenLayout.css';
+import './Css/GameScreenLayout.css';
 
 export default function GameScreenLayout({ left, right }) {
   return (
