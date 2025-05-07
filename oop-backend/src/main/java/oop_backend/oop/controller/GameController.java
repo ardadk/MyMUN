@@ -7,7 +7,6 @@ import oop_backend.oop.model.Player;
 import oop_backend.oop.model.WorldProblem;
 import oop_backend.oop.model.ProblemOption;
 import oop_backend.oop.service.GameService;
-import oop_backend.oop.service.GameServiceImpl;
 import oop_backend.oop.service.ProblemService;
 import oop_backend.oop.service.PolicyService;
 import java.util.List;
@@ -26,7 +25,6 @@ public class GameController {
     private final GameService gameService;
     private final ProblemService problemService;
     private final PolicyService policyService;
-    private Map<String, String> gameIdBySession = new HashMap<>();
     private Map<String, List<Player>> gamePlayerMap = new HashMap<>();
     private int counter = 1; // Counter değişkeni tanımlandı
 
