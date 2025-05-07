@@ -11,6 +11,9 @@ import LeftPanel        from './components/LeftPanel';
 import RightPanel       from './components/RightPanel/RightPanel';
 import CountryPage      from './components/CountryPage/CountryPage';
 
+import { Player } from './models/Player';
+import { GameService } from './services/GameService';
+
 // Statik veri importları kaldırıldı - artık hepsi backend'den gelecek
 
 const countryCodes = ["A","B","C","D","E"];
@@ -63,75 +66,62 @@ export default function App(){
   };
   
   const handleSubmitToBackend = async () => {
-    setIsSubmitting(true);
     try {
-      // Oyuncu verilerini hazırla
-      const playerData = playerCountries.map((country, index) => ({
-        userId: index + 1,
+      setIsSubmitting(true);
+      
+      // Düzeltilmiş veri yapısı
+      const playerRequests = playerCountries.map((country, index) => ({
+        userId: (index + 1),
         countryName: country
       }));
       
-      console.log("Backend'e gönderilecek veriler:", playerData);
+      console.log("Gönderilen oyuncu verileri:", playerRequests);
+      const gameData = await GameService.startGame(playerRequests);
+      console.log("Alınan oyun verisi:", gameData);
       
-      // Backend'e POST isteği gönder
-      const response = await axios.post('http://localhost:8080/api/game/start', {
-        players: playerData
-      }, {
-        timeout: 5000
-      });
+      setGameId(gameData.gameId);
+      setGlobalProblem(gameData.problem);
       
-      console.log("Backend yanıtı:", response.data);
-      
-      // Backend'den gelen verileri state'e kaydet
-      if (response.data.success) {
-        // Oyun ID'sini kaydet
-        setGameId(response.data.gameId);
-        
-        // Dünya problemini kaydet
-        setGlobalProblem(response.data.gameData.problem);
-        
-        // Seçenekleri kaydet (ilk adım için)
-        setChatOptionsMap({
-          start: response.data.gameData.options
-        });
-        
-        // Oyuncuların bilgilerini backend'den al
-        const backendPlayers = response.data.gameData.players;
-        
-        // Ekonomi ve refah skorlarını başlangıç değerleriyle doldur
-        const initialPolicies = {};
-        const initialScores = {
-          econScores: {},
-          welfareScores: {}
-        };
-        const initialVotes = {};
-        
-        backendPlayers.forEach(player => {
-          const country = player.countryName;
-          initialScores.econScores[country] = 50; // Başlangıç değeri
-          initialScores.welfareScores[country] = 50; // Başlangıç değeri
-          initialPolicies[country] = player.policy; // Backend'den gelen politikayı kullan
-          initialVotes[country] = 0;
-        });
-        
-        setScores(initialScores);
-        setCountryPolicies(initialPolicies);
-        setVoteCounts(initialVotes);
-        
-        // Oyun ekranına geç
-        setGameStage("playing");
+      // Seçenekleri doğrudan ayarla
+      if (Array.isArray(gameData.options) && gameData.options.length > 0) {
+        console.log("Başlangıç seçenekleri:", gameData.options);
+        setChatOptionsMap({ start: gameData.options });
       } else {
-        console.error("Oyun başlatılamadı:", response.data.message);
-        alert("Oyun başlatılamadı: " + response.data.message);
+        console.error("Seçenekler bulunamadı veya boş:", gameData.options);
+        // Varsayılan seçenek ekle
+        setChatOptionsMap({ 
+          start: [{
+            id: "default",
+            text: "Varsayılan seçenek - Sonraki tura geç",
+            next: "start",
+            economyEffect: 0,
+            welfareEffect: 0
+          }]
+        });
       }
+      
+      setGameStage("playing");
     } catch (error) {
-      console.error("Oyun başlatma hatası:", error.response?.data || error.message);
-      alert("Oyun başlatma hatası: " + (error.response?.data?.message || error.message));
+      console.error("Backend isteği başarısız:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
   
+  const updatePlayerRating = async (playerId, rating) => {
+    try {
+      await GameService.updatePlayerRating(gameId, playerId, rating);
+      
+      // State'i güncelle
+      setScores(prevScores => ({
+        ...prevScores,
+        [playerId]: rating
+      }));
+    } catch (error) {
+      console.error("Puanlama hatası:", error);
+    }
+  };
+
   const handleRestart = () => {
     // tüm state'leri sıfırla
     setGameStage("start");

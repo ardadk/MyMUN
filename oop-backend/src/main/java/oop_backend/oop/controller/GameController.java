@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -37,48 +38,45 @@ public class GameController {
     @PostMapping("/start")
     public ResponseEntity<?> startGame(@RequestBody StartGameRequest request) {
         try {
-            // Gelen basit oyuncu verilerini tam Player nesnelerine dönüştür
-            List<Player> players = new ArrayList<>();
+            // Burada bir test logu ekleyelim
+            System.out.println("Oyun başlatma isteği: " + request);
             
-            for (StartGameRequest.PlayerRequest playerRequest : request.getPlayers()) {
-                Player player = new Player(playerRequest.getUserId(), playerRequest.getCountryName());
-                // Her oyuncuya rastgele bir politika ata
-                player.setPolicy(policyService.getRandomPolicy());
-                players.add(player);
+            // Rastgele bir problem seç
+            WorldProblem selectedProblem = problemService.selectRandomProblem();
+            System.out.println("Seçilen problem: " + selectedProblem);
+            
+            // Başlangıç seçeneklerini al (burayı kontrol et)
+            List<ProblemOption> initialOptions = problemService.getOptionsForStep("start");
+            System.out.println("Başlangıç seçenekleri: " + initialOptions);
+            
+            if (initialOptions == null || initialOptions.isEmpty()) {
+                // Eğer başlangıç seçenekleri yoksa, varsayılan seçenekler ekle
+                initialOptions = new ArrayList<>();
+                ProblemOption defaultOption = new ProblemOption();
+                defaultOption.setId("default");
+                defaultOption.setText("Ekonomik krize karşı önlem al");
+                defaultOption.setNext("economy_action");
+                defaultOption.setEconomyEffect(1);
+                defaultOption.setWelfareEffect(0);
+                initialOptions.add(defaultOption);
             }
             
-            // Oyunu başlat
-            String gameId = gameService.startGame(players);
+            // Oyun kimliği oluştur
+            String gameId = UUID.randomUUID().toString();
             
-            // Oyuncu listesini sakla
-            gamePlayerMap.put(gameId, players);
-            
-            // Rastgele seçilen problemi al
-            WorldProblem problem = problemService.selectRandomProblem();
-            
-            // Session ID olarak ilk oyuncunun ID'sini kullan
-            String sessionId = request.getPlayers().get(0).getUserId().toString();
-            gameIdBySession.put(sessionId, gameId);
-            
-            // Oyuncu verilerini, problemi ve seçenekleri frontend'e gönder
+            // Yanıtı hazırla
             Map<String, Object> gameData = new HashMap<>();
-            gameData.put("status", "active");
-            gameData.put("problem", problem.getDescription());
-            gameData.put("options", problem.getOptions());
-            gameData.put("players", players); // Frontend'e tüm oyuncu detaylarını gönder
+            gameData.put("problem", selectedProblem);
+            gameData.put("options", initialOptions);
             
-            return ResponseEntity.ok().body(
-                Map.of(
-                    "success", true, 
-                    "message", "Oyun başlatıldı!",
-                    "gameId", gameId,
-                    "gameData", gameData
-                )
-            );
+            Map<String, Object> response = new HashMap<>();
+            response.put("gameId", gameId);
+            response.put("gameData", gameData);
+            
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(
-                Map.of("success", false, "message", "Oyun başlatılamadı: " + e.getMessage())
-            );
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Oyun başlatma hatası: " + e.getMessage());
         }
     }
     
