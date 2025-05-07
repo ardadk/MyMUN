@@ -7,7 +7,6 @@ import oop_backend.oop.model.Player;
 import oop_backend.oop.model.WorldProblem;
 import oop_backend.oop.model.ProblemOption;
 import oop_backend.oop.service.GameService;
-import oop_backend.oop.service.GameServiceImpl;
 import oop_backend.oop.service.ProblemService;
 import oop_backend.oop.service.PolicyService;
 import java.util.List;
@@ -245,5 +244,62 @@ public class GameController {
         }
     }
     
-    // Removed duplicate method definition to resolve the compile error.
+    @GetMapping("/scores/{gameId}")
+    public ResponseEntity<?> updatePlayerScores(
+            @PathVariable("gameId") String gameId, 
+            @RequestBody Map<String, Object> scoreUpdate) {
+        try {
+            if (!scoreUpdate.containsKey("country") || !scoreUpdate.containsKey("economyEffect") || 
+                !scoreUpdate.containsKey("welfareEffect")) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Gerekli parametreler eksik"));
+            }
+            
+            String countryName = String.valueOf(scoreUpdate.get("country"));
+            
+            // Tip dönüşümü güvenli bir şekilde yapılıyor
+            int economyEffect;
+            int welfareEffect;
+            try {
+                economyEffect = Integer.parseInt(String.valueOf(scoreUpdate.get("economyEffect")));
+                welfareEffect = Integer.parseInt(String.valueOf(scoreUpdate.get("welfareEffect")));
+            } catch (NumberFormatException e) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Sayısal değerler geçerli formatta değil"));
+            }
+            
+            List<Player> players = gamePlayerMap.get(gameId);
+            if (players == null) {
+                return ResponseEntity.notFound().build();
+            }
+            
+            for (Player player : players) {
+                if (player.getCountryName().equals(countryName)) {
+                    // Mevcut değerleri al ve güncelle
+                    int newEconomy = player.getEconomyScore() + economyEffect * 10;
+                    int newWelfare = player.getWelfareScore() + welfareEffect * 10;
+                    
+                    // Sınırlama kontrolleri
+                    newEconomy = Math.max(0, Math.min(100, newEconomy));
+                    newWelfare = Math.max(0, Math.min(100, newWelfare));
+                    
+                    // Skorları güncelle
+                    player.setEconomyScore(newEconomy);
+                    player.setWelfareScore(newWelfare);
+                    
+                    System.out.println("Ülke: " + player.getCountryName() + 
+                             ", Ekonomi: " + player.getEconomyScore() + 
+                             ", Refah: " + player.getWelfareScore());
+
+                    return ResponseEntity.ok(Map.of(
+                        "country", countryName,
+                        "economyScore", player.getEconomyScore(),
+                        "welfareScore", player.getWelfareScore()
+                    ));
+                }
+            }
+            
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
 }

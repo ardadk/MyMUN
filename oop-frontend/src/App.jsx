@@ -26,14 +26,15 @@ export default function App(){
   // --- oynama akışı state'leri ---
   const [currentCountryIndex, setCurrentCountryIndex] = useState(0);
   const [countryPolicies, setCountryPolicies] = useState({});
-  const [econScores, setEconScores] = useState({});
-  const [welfareScores, setWelfareScores] = useState({});
   const [globalProblem, setGlobalProblem] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
   const [messageSteps, setMessageSteps] = useState({});
   const [isScoringPhase, setIsScoringPhase] = useState(false);
   const [scoreTurnIndex, setScoreTurnIndex] = useState(0);
-  const [scores, setScores] = useState({});
+  const [scores, setScores] = useState({
+    econScores: {},
+    welfareScores: {}
+  });
   const [voteCounts, setVoteCounts] = useState({});
   const [chatOptionsMap, setChatOptionsMap] = useState({});
   // --- hangi ülke detaya bakıyor ---
@@ -98,25 +99,23 @@ export default function App(){
         const backendPlayers = response.data.gameData.players;
         
         // Ekonomi ve refah skorlarını başlangıç değerleriyle doldur
-        const initialEconScores = {};
-        const initialWelfareScores = {};
         const initialPolicies = {};
-        const initialScores = {};
+        const initialScores = {
+          econScores: {},
+          welfareScores: {}
+        };
         const initialVotes = {};
         
         backendPlayers.forEach(player => {
           const country = player.countryName;
-          initialEconScores[country] = 50; // Başlangıç değeri
-          initialWelfareScores[country] = 50; // Başlangıç değeri
+          initialScores.econScores[country] = 50; // Başlangıç değeri
+          initialScores.welfareScores[country] = 50; // Başlangıç değeri
           initialPolicies[country] = player.policy; // Backend'den gelen politikayı kullan
-          initialScores[country] = player.rating;
           initialVotes[country] = 0;
         });
         
-        setEconScores(initialEconScores);
-        setWelfareScores(initialWelfareScores);
-        setCountryPolicies(initialPolicies);
         setScores(initialScores);
+        setCountryPolicies(initialPolicies);
         setVoteCounts(initialVotes);
         
         // Oyun ekranına geç
@@ -143,21 +142,57 @@ export default function App(){
 
     setCurrentCountryIndex(0);
     setCountryPolicies({});
-    setEconScores({});
-    setWelfareScores({});
     setGlobalProblem("");
     setChatMessages([]);
     setMessageSteps({});
     setChatOptionsMap({});
     setIsScoringPhase(false);
     setScoreTurnIndex(0);
-    setScores({});
+    setScores({
+      econScores: {},
+      welfareScores: {}
+    });
     setVoteCounts({});
     setViewCountry(null);
     setGameId(null);
   };
 
   // --- oynama akışı handler'ları ---
+  const updateBackendScores = async (country, economyEffect, welfareEffect) => {
+    try {
+      await axios.put(`http://localhost:8080/api/game/scores/${gameId}`, {
+        country,
+        economyEffect,
+        welfareEffect
+      });
+      
+      // Güncel skorları al
+      fetchScores();
+    } catch (error) {
+      console.error("Skorlar güncellenirken hata oluştu:", error);
+    }
+  };
+
+  const fetchScores = async () => {
+    try {
+      console.log("Skorlar için istek yapılıyor:", `http://localhost:8080/api/game/scores/${gameId}`);
+      const response = await axios.get(`http://localhost:8080/api/game/scores/${gameId}`);
+      
+      console.log("Backend'den alınan ham skorlar:", response.data);
+      console.log("Ekonomi skorları:", response.data.econScores);
+      console.log("Refah skorları:", response.data.welfareScores);
+  
+      if (!response.data.econScores || !response.data.welfareScores) {
+        console.error("UYARI: Backend'den alınan verilerde econScores veya welfareScores bulunamadı");
+        console.error("Alınan veri yapısı:", response.data);
+      }
+      
+      setScores(response.data);
+    } catch (error) {
+      console.error("Skorlar alınırken hata oluştu:", error);
+    }
+  };
+
   const handleOptionSelect = async (opt) => {
     if (!opt) {
       console.error("Geçersiz seçenek seçildi:", opt);
@@ -170,19 +205,8 @@ export default function App(){
     // Seçeneği sohbet mesajlarına ekle
     setChatMessages(m => [...m,{country:cc,text:opt.text}]);
     
-    console.log(`${cc} için ekonomi skoru: ${econScores[cc]} + ${opt.economyEffect * 10}`);
-    console.log(`${cc} için refah skoru: ${welfareScores[cc]} + ${opt.welfareEffect * 10}`);
-    
-    // Ekonomi ve refah skorlarını güncelle
-    setEconScores(prev => ({
-      ...prev,
-      [cc]: Math.max(0, Math.min(100, prev[cc] + opt.economyEffect * 10))
-    }));
-    
-    setWelfareScores(prev => ({
-      ...prev,
-      [cc]: Math.max(0, Math.min(100, prev[cc] + opt.welfareEffect * 10))
-    }));
+    // Ekonomi ve refah skorlarını backend'de güncelle
+    await updateBackendScores(cc, opt.economyEffect, opt.welfareEffect);
     
     // Seçilen seçeneğin next değerine göre messageSteps'i güncelle
     const nextStep = opt.next || "start";
@@ -344,11 +368,16 @@ export default function App(){
     case "playing":
       // **eğer detay sayfa** isteniyorsa tam genişlik
       if (viewCountry) {
+        console.log("Ülke detay sayfası için skorlar:", {
+          ülke: viewCountry,
+          ekonomi: scores.econScores[viewCountry],
+          refah: scores.welfareScores[viewCountry]
+        });
         return (
           <CountryPage
             countryCode={viewCountry}
-            econ={econScores[viewCountry]}
-            welfare={welfareScores[viewCountry]}
+            econ={scores.econScores[viewCountry]}
+            welfare={scores.welfareScores[viewCountry]}
             policy={countryPolicies[viewCountry]}
             problem={globalProblem}
             totalScores={scores}
@@ -368,8 +397,8 @@ export default function App(){
         <LeftPanel
           playerCountries={playerCountries}
           onCountrySelect={c => setViewCountry(c)}
-          econScores={econScores}
-          welfareScores={welfareScores}
+          econScores={scores.econScores}
+          welfareScores={scores.welfareScores}
           countryPolicies={countryPolicies}
         />
       );
