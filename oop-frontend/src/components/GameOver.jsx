@@ -1,24 +1,35 @@
 import React from 'react';
+import './Css/GameOver.css';
 
 export default function GameOver({ scores }) {
-  // Puanları sıralayarak en yüksek puanı alanı bul
   const sortedScores = Object.entries(scores).sort(([, a], [, b]) => b - a);
-  const champion = sortedScores[0]; // En yüksek puanı alan
+  const champion = sortedScores[0];
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h1>Game Over</h1>
-      {champion && (
-        <h2>Şampiyon: {champion[0]} (Puan: {champion[1]})</h2>
-      )}
-      <h3>Skor Tablosu:</h3>
-      <ul style={{ listStyle: 'none', padding: 0 }}>
-        {sortedScores.map(([country, score]) => (
-          <li key={country} style={{ margin: '10px 0' }}>
-            {country}: {score} puan
-          </li>
-        ))}
-      </ul>
+    <div className="game-over-container">
+      <div className="game-over-card">
+        <h1 className="game-over-title">Game Over</h1>
+        {champion && (
+          <div className="champion-section">
+            <h2>Şampiyon</h2>
+            <div className="champion-info">
+              <span className="champion-name">{champion[0]}</span>
+              <span className="champion-score">{champion[1]} puan</span>
+            </div>
+          </div>
+        )}
+        <div className="scoreboard-section">
+          <h3>Skor Tablosu</h3>
+          <ul className="scores-list">
+            {sortedScores.map(([country, score]) => (
+              <li key={country} className="score-item">
+                <span className="country">{country}</span>
+                <span className="score">{score} puan</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }
