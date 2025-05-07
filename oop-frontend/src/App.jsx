@@ -5,6 +5,7 @@ import StartScreen      from './components/StartScreen';
 import PlayerSelection  from './components/PlayerSelection';
 import CountrySelection from './components/CountrySelection';
 import GameSummary      from './components/GameSummary';
+import GameOver         from './components/GameOver'; 
 
 import GameScreenLayout from './components/GameScreenLayout';
 import LeftPanel        from './components/LeftPanel';
@@ -40,6 +41,7 @@ export default function App(){
   const [viewCountry, setViewCountry] = useState(null);
   // --- oyun kimliği ---
   const [gameId, setGameId] = useState(null);
+  const [counter, setCounter] = useState(0); // Counter state olarak tanımlandı
 
   // --- seçim akışı handler'ları ---
   const handleStartClick = () => setGameStage("selectPlayers");
@@ -248,60 +250,93 @@ export default function App(){
 
   const handleVoteSubmit = async (votes) => {
     const voter = playerCountries[scoreTurnIndex];
-    const newScores = {...scores}, newCounts={...voteCounts};
-    
-    Object.entries(votes).forEach(([t,p]) => {
+    const newScores = { ...scores },
+      newCounts = { ...voteCounts };
+  
+    Object.entries(votes).forEach(([t, p]) => {
       newScores[t] = (newScores[t] || 0) + p;
       newCounts[t] = (newCounts[t] || 0) + 1;
     });
-    
+  
     setScores(newScores);
     setVoteCounts(newCounts);
-
-    if (scoreTurnIndex < playerCountries.length-1) {
-      setScoreTurnIndex(i => i+1);
+  
+    if (scoreTurnIndex < playerCountries.length - 1) {
+      setScoreTurnIndex((i) => i + 1);
     } else {
       // Tüm oyuncular oy verdi, yeni tura geç
       setIsScoringPhase(false);
       setScoreTurnIndex(0);
       setCurrentCountryIndex(0);
-      
+  
       console.log("Tur tamamlandı, yeni problem alınıyor...");
+  
+      if (counter < 3) {
+        try {
+          // Yeni bir problem al
+          const response = await axios.get(
+            `http://localhost:8080/api/game/problem/next/${gameId}`
+          );
+          console.log("Backend'den gelen yanıt:", response.data);
       
-      try {
-        // Yeni bir problem al
-        const response = await axios.get(`http://localhost:8080/api/game/problem/next/${gameId}`);
-        console.log("Backend'den gelen yanıt:", response.data);
-        
-        if (response.data && response.data.description) {
-          // Yeni problemin açıklamasını kaydet
-          setGlobalProblem(response.data.description);
-          
-          // Seçenekler dizisini kontrol et
-          if (response.data.options && Array.isArray(response.data.options) && response.data.options.length > 0) {
-            console.log("Yeni seçenekler alındı:", response.data.options);
+          // Counter'ı sadece bir kere artır
+          setCounter(prevCounter => {
+            const newCounter = prevCounter + 1;
+            console.log("Yeni tur sayısı:", newCounter);
             
-            // Tüm önceki adımları ve seçenekleri temizle, sadece yeni başlangıç seçeneklerini ekle
-            setChatOptionsMap({
-              start: response.data.options
-            });
-            
-            // Adım takibini sıfırla
-            setMessageSteps({});
-            
-            // Mesaj geçmişini sıfırla
-            setChatMessages([]);
-            
-            console.log("Yeni problem ayarlandı:", response.data.description);
-            console.log("Yeni seçenekler ayarlandı:", response.data.options);
+            if (newCounter >= 3) {
+              console.log("3 tur tamamlandı, game-over ekranına geçiliyor...");
+              setGameStage("game-over");
+            }
+            return newCounter;
+          });
+      
+          if (response.data && response.data.description) {
+            // Yeni problemin açıklamasını kaydet
+            setGlobalProblem(response.data.description);
+      
+            // Seçenekler dizisini kontrol et
+            if (
+              response.data.options &&
+              Array.isArray(response.data.options) &&
+              response.data.options.length > 0
+            ) {
+              console.log("Yeni seçenekler alındı:", response.data.options);
+      
+              // Tüm önceki adımları ve seçenekleri temizle, sadece yeni başlangıç seçeneklerini ekle
+              setChatOptionsMap({
+                start: response.data.options,
+              });
+      
+              // Adım takibini sıfırla
+              setMessageSteps({});
+      
+              // Mesaj geçmişini sıfırla
+              setChatMessages([]);
+      
+              console.log("Yeni problem ayarlandı:", response.data.description);
+              console.log("Yeni seçenekler ayarlandı:", response.data.options);
+            } else {
+              console.error(
+                "Yeni problem için seçenekler eksik veya boş:",
+                response.data
+              );
+            }
           } else {
-            console.error("Yeni problem için seçenekler eksik veya boş:", response.data);
+            console.error(
+              "Yeni problem alınamadı veya geçerli değil:",
+              response.data
+            );
           }
-        } else {
-          console.error("Yeni problem alınamadı veya geçerli değil:", response.data);
+        } catch (error) {
+          console.error(
+            "Yeni problem alınamadı:",
+            error.response?.data || error.message
+          );
         }
-      } catch (error) {
-        console.error("Yeni problem alınamadı:", error.response?.data || error.message);
+      } else {
+        console.log("3 tur tamamlandı, game-over ekranına geçiliyor...");
+        setGameStage("game-over"); // GameOver bileşenine geç
       }
     }
   };
@@ -390,6 +425,9 @@ export default function App(){
       );
 
       return <GameScreenLayout left={left} right={right}/>;
+
+    case "game-over":
+      return <GameOver scores={scores} />;
 
     default:
       return <div>Bir şeyler ters gitti…</div>;

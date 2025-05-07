@@ -193,12 +193,6 @@ public class GameController {
             );
         }
     }
-
-    @GetMapping("/game-over")
-    @CrossOrigin(origins = "*") // Tüm kaynaklara izin ver
-    public ResponseEntity<String> gameOver() {
-        return ResponseEntity.ok("<h1>Game Over</h1>");
-    }
     
     @GetMapping("/players/{gameId}")
     public ResponseEntity<?> getGamePlayers(@PathVariable("gameId") String gameId) {
