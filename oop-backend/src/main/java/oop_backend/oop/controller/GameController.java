@@ -65,10 +65,31 @@ public class GameController {
             // Oyun kimliği oluştur
             String gameId = UUID.randomUUID().toString();
             
+            // PlayerRequest nesnelerini Player nesnelerine dönüştürün
+            List<Player> players = new ArrayList<>();
+            for (StartGameRequest.PlayerRequest playerRequest : request.getPlayers()) {
+                Player player = new Player(playerRequest.getUserId(), playerRequest.getCountryName());
+                player.setPolicy(policyService.getRandomPolicy());
+                
+                // Yeni eklenen ekonomi ve refah durumu için başlangıç değerleri
+                player.setEconomyScore(10);
+                player.setWelfareScore(3);
+                
+                players.add(player);
+            }
+            
+            // Oyuncuları gamePlayerMap'e ekle
+            gamePlayerMap.put(gameId, players);
+            System.out.println("Oyuncular kaydedildi, game ID: " + gameId + ", Oyuncu sayısı: " + players.size());
+            
+            // GameService ile oyunu başlat
+            gameService.startGame(players);
+            
             // Yanıtı hazırla
             Map<String, Object> gameData = new HashMap<>();
             gameData.put("problem", selectedProblem);
             gameData.put("options", initialOptions);
+            gameData.put("players", players); // Oyuncuları da yanıta ekle
             
             Map<String, Object> response = new HashMap<>();
             response.put("gameId", gameId);

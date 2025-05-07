@@ -10,26 +10,8 @@ export class GameService {
       const response = await axios.post('http://localhost:8080/api/game/start', { players });
       console.log("Backend'den gelen yanıt:", response.data);
       
-      // Backend yanıt yapısını detaylı logla
-      const { gameId, gameData } = response.data || {};
-      console.log("Game ID:", gameId);
-      console.log("Game Data:", gameData);
-      console.log("Problem:", gameData?.problem);
-      console.log("Options:", gameData?.options);
-      
-      // Eğer options doğrudan gameData'da değilse, daha derinlerde olabilir
-      let options = [];
-      if (gameData?.options && Array.isArray(gameData.options)) {
-        options = gameData.options;
-      } else if (gameData?.problem?.options && Array.isArray(gameData.problem.options)) {
-        options = gameData.problem.options;
-      }
-      
-      return {
-        gameId: gameId || "temp-id",
-        problem: typeof gameData?.problem === 'object' ? gameData.problem.description : gameData?.problem || "Dünya çapında bir ekonomik kriz başladı.",
-        options: options
-      };
+      // Backend yanıtını doğrudan döndür
+      return response.data;
     } catch (error) {
       console.error('Oyun başlatma hatası:', error);
       throw error;

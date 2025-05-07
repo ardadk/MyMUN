@@ -40,11 +40,7 @@ export default function App(){
   // --- hangi ülke detaya bakıyor ---
   const [viewCountry, setViewCountry] = useState(null);
   // --- oyun kimliği ---
-<<<<<<< Updated upstream
-  const [gameId, setGameId] = useState(null);
-=======
-  const [counter, setCounter] = useState(0); // Counter state olarak tanımlandı
->>>>>>> Stashed changes
+
 
   // Backend'den alınan skorları tutacak yeni state ekle
   const [gameId, setGameId] = useState(null); // Ayrı bir state olarak gameId
@@ -53,6 +49,7 @@ export default function App(){
     welfareScores: {},
     policies: {},
   });
+  const [players, setPlayers] = useState([]);
 
   // --- seçim akışı handler'ları ---
   const handleStartClick = () => setGameStage("selectPlayers");
@@ -79,23 +76,54 @@ export default function App(){
     try {
       setIsSubmitting(true);
       
-<<<<<<< Updated upstream
       // Düzeltilmiş veri yapısı
-=======
-      // Oyuncu verilerini hazırla
->>>>>>> Stashed changes
       const playerRequests = playerCountries.map((country, index) => ({
         userId: (index + 1),
         countryName: country
       }));
       
       console.log("Gönderilen oyuncu verileri:", playerRequests);
-<<<<<<< Updated upstream
-      const gameData = await GameService.startGame(playerRequests);
-      console.log("Alınan oyun verisi:", gameData);
+      const response = await GameService.startGame(playerRequests);
+      console.log("Alınan oyun verisi:", response);
       
-      setGameId(gameData.gameId);
-      setGlobalProblem(gameData.problem);
+      const gameData = response.gameData || {};
+      
+      setGameId(response.gameId);
+      setGlobalProblem(gameData.problem?.description || gameData.problem || "");
+      
+      // Oyuncuları kaydet
+      if (gameData.players) {
+        console.log("Backend'den alınan oyuncular:", gameData.players);
+        
+        // Player modellerine dönüştür
+        const playerModels = Player.listFromApi(gameData.players);
+        setPlayers(playerModels);
+        
+        // Ekonomi ve refah durumlarını ayarla
+        const econData = {};
+        const welfareData = {};
+        const policyData = {};
+        
+        gameData.players.forEach(player => {
+          if (player.countryName) {
+            econData[player.countryName] = player.economyStatus || 3;
+            welfareData[player.countryName] = player.welfare || 3;
+            if (player.policy) {
+              policyData[player.countryName] = player.policy;
+            }
+          }
+        });
+        
+        // GameInfo state'ini güncelle
+        setGameInfo(prevInfo => ({
+          ...prevInfo,
+          econScores: econData,
+          welfareScores: welfareData
+        }));
+        
+        // Politikaları ayarla
+        setCountryPolicies(policyData);
+      }
       
       // Seçenekleri doğrudan ayarla
       if (Array.isArray(gameData.options) && gameData.options.length > 0) {
@@ -113,26 +141,6 @@ export default function App(){
             welfareEffect: 0
           }]
         });
-=======
-      const response = await axios.post('http://localhost:8080/api/game/start', { players: playerRequests });
-      
-      if (response.data.success) {
-        const newGameId = response.data.gameId;
-        console.log("Oyun başarıyla başlatıldı. ID:", newGameId);
-        
-        // Önemli: gameId state'ini ayrı güncelle
-        setGameId(newGameId);
-        
-        setGlobalProblem(response.data.gameData.problem);
-        setChatOptionsMap({ start: response.data.gameData.options });
-        
-        // Yeni gameId ile bilgi çek
-        await fetchGameInfoDirectly(newGameId);
-        
-        setGameStage("playing");
-      } else {
-        console.error("Oyun başlatılamadı:", response.data.message);
->>>>>>> Stashed changes
       }
       
       setGameStage("playing");
@@ -193,7 +201,7 @@ export default function App(){
     
     // Ekonomi ve refah skorlarını frontend'de güncelleme yerine backend'e gönder
     try {
-      const response = await axios.put(`http://localhost:8080/api/game/scores/${gameId}`, {
+      const response = await axios.put(`http://localhost:8080/api/game/info/${gameId}`, {
         country: cc,
         economyEffect: opt.economyEffect || 0,
         welfareEffect: opt.welfareEffect || 0
@@ -290,17 +298,6 @@ export default function App(){
       setCurrentCountryIndex(0);
       
       console.log("Tur tamamlandı, yeni problem alınıyor...");
-<<<<<<< Updated upstream
-=======
-  
-      if (counter < 3) {
-        try {
-          // Yeni bir problem al
-          const response = await axios.get(
-            `http://localhost:8080/api/game/problem/next/${gameInfo.gameId}`
-          );
-          console.log("Backend'den gelen yanıt:", response.data);
->>>>>>> Stashed changes
       
       try {
         // Yeni bir problem al
