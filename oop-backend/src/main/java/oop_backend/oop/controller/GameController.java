@@ -243,5 +243,110 @@ public class GameController {
         }
     }
     
-    // Removed duplicate method definition to resolve the compile error.
+    // Oyunun skorlarını alma endpointi
+    @GetMapping("/info/{gameId}")
+    public ResponseEntity<?> getGameInfo(@PathVariable("gameId") String gameId) {
+        try {
+            System.out.println("getGameInfo çağrıldı - gameId: " + gameId);
+            
+            List<Player> players = gamePlayerMap.get(gameId);
+            
+            if (players == null) {
+                System.out.println("HATA: " + gameId + " için oyuncu listesi bulunamadı!");
+                return ResponseEntity.notFound().build();
+            }
+            
+            System.out.println("Oyuncu sayısı: " + players.size());
+            
+            Map<String, Object> gameInfo = new HashMap<>();
+            Map<String, Integer> econScores = new HashMap<>();
+            Map<String, Integer> welfareScores = new HashMap<>();
+            Map<String, String> policies = new HashMap<>();
+            
+            for (Player player : players) {
+                econScores.put(player.getCountryName(), player.getEconomyScore());
+                welfareScores.put(player.getCountryName(), player.getWelfareScore());
+                policies.put(player.getCountryName(), player.getPolicy());
+                
+                System.out.println("Ülke: " + player.getCountryName() + 
+                                 ", Ekonomi: " + player.getEconomyScore() + 
+                                 ", Refah: " + player.getWelfareScore() +
+                                 ", Politika: " + player.getPolicy());
+            }
+            
+            gameInfo.put("gameId", gameId); // String gameId değerini kullan
+            gameInfo.put("econScores", econScores);
+            gameInfo.put("welfareScores", welfareScores);
+            gameInfo.put("policies", policies);
+            
+            return ResponseEntity.ok(gameInfo);
+        } catch (Exception e) {
+            System.out.println("HATA: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // Skorları güncelleme endpointi
+    @PutMapping("/info/{gameId}")
+    public ResponseEntity<?> updatePlayerScores(@PathVariable("gameId") String gameId, @RequestBody Map<String, Object> scoreUpdate) {
+        try {
+            System.out.println("updatePlayerScores çağrıldı - gameId: " + gameId);
+            System.out.println("Gelen veri: " + scoreUpdate);
+            
+            if (!scoreUpdate.containsKey("country") || !scoreUpdate.containsKey("economyEffect") || 
+                !scoreUpdate.containsKey("welfareEffect")) {
+                System.out.println("HATA: Gerekli parametreler eksik");
+                return ResponseEntity.badRequest().body(Map.of("error", "Gerekli parametreler eksik"));
+            }
+            
+            String countryName = String.valueOf(scoreUpdate.get("country"));
+            
+            // Tip dönüşümü güvenli bir şekilde yapılıyor
+            int economyEffect;
+            int welfareEffect;
+            try {
+                economyEffect = Integer.parseInt(String.valueOf(scoreUpdate.get("economyEffect")));
+                welfareEffect = Integer.parseInt(String.valueOf(scoreUpdate.get("welfareEffect")));
+            } catch (NumberFormatException e) {
+                System.out.println("HATA: Sayısal değerler geçerli formatta değil");
+                return ResponseEntity.badRequest().body(Map.of("error", "Sayısal değerler geçerli formatta değil"));
+            }
+            
+            List<Player> players = gamePlayerMap.get(gameId);
+            if (players == null) {
+                System.out.println("HATA: " + gameId + " için oyuncu listesi bulunamadı!");
+                return ResponseEntity.notFound().build();
+            }
+            
+            for (Player player : players) {
+                if (player.getCountryName().equals(countryName)) {
+                    // Mevcut değerleri al ve güncelle
+                    int newEconomy = player.getEconomyScore() + economyEffect * 10;
+                    int newWelfare = player.getWelfareScore() + welfareEffect * 10;
+                    
+                    // Skorları güncelle
+                    player.setEconomyScore(newEconomy);
+                    player.setWelfareScore(newWelfare);
+                    
+                    System.out.println("Skorlar güncellendi - Ülke: " + player.getCountryName() + 
+                                 ", Ekonomi: " + player.getEconomyScore() + 
+                                 ", Refah: " + player.getWelfareScore());
+
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("country", countryName);
+                    result.put("economyScore", player.getEconomyScore());
+                    result.put("welfareScore", player.getWelfareScore());
+                    
+                    return ResponseEntity.ok(result);
+                }
+            }
+            
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            System.out.println("HATA: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
 }
