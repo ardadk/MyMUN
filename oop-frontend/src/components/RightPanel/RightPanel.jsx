@@ -1,14 +1,10 @@
 import React from 'react';
 import './RightPanel.css';
-import ProblemCard from '../Cards/ProblemCard';
-import OptionButtons from './OptionButtons';
 import Scoreboard from './Scoreboard';
 import VoteForm from './VoteForm';
+import ChatBox from '../ChatBox';
 
 const RightPanel = ({ 
-  problem, 
-  options, 
-  onSelectOption, 
   isScoringPhase, 
   voter,
   onVote, 
@@ -26,20 +22,14 @@ const RightPanel = ({
 
   return (
     <div className="right-panel">
-      {/* Sıradaki ülke gösterimi */}
-      <div className="current-player">
-        <p className="current-speaker">
-          Sıradaki konuşmacı: <strong>{voter || "..."}</strong>
-        </p>
-      </div>
-
-      <div className="right-panel-content">
-        <ProblemCard text={problem} />
-
-        <div className="options-card">
-          <OptionButtons options={options} onSelect={onSelectOption} />
-        </div>
-
+      <h2 className="panel-title">Konsey Görüşmeleri</h2>
+      
+      {/* ChatBox only */}
+      <ChatBox messages={chatMessages} />
+      
+      {/* Only one scoreboard - the floating one */}
+      <div className="floating-scoreboard">
+        <h3>GÜNCEL ORTALAMA PUANLAR</h3>
         <Scoreboard totalScores={totalScores} voteCounts={voteCounts} />
       </div>
     </div>

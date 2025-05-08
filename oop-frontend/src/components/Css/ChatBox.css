@@ -1,38 +1,77 @@
 .chatbox {
-    background-color: #fff;
-    border-radius: 10px;
-    padding: 12px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .chatbox-title {
-    background-color: #e6e6e6;
-    text-align: center;
-    font-weight: bold;
-    padding: 8px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-  }
-  
-  .chatbox-messages {
-    max-height: 250px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .chat-message {
-    background-color: #fef6d8;
-    border-radius: 6px;
-    padding: 8px;
-  }
-  
-  .chat-A { background-color: #d6f8d6; }
-  .chat-B { background-color: #fbdcdc; }
-  .chat-C { background-color: #d6eaff; }
-  .chat-D { background-color: #e5d6f8; }
-  .chat-E { background-color: #d6f8f2; }
-  
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.chatbox-title {
+  background-color: #f5f5f5;
+  text-align: center;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.chatbox-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-message {
+  padding: 10px 12px;
+  border-radius: 8px;
+  position: relative;
+  max-width: 85%;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.chat-problem {
+  background-color: #ffefb8; /* Light yellow for problems */
+  align-self: center;
+  width: 90%;
+  font-weight: 500;
+  border-left: 4px solid #ffd700;
+}
+
+.chat-A {
+  background-color: #d6f8d6; /* Light green */
+  align-self: flex-start;
+}
+
+.chat-B {
+  background-color: #fbdcdc; /* Light red */
+  align-self: flex-end;
+}
+
+.chat-C {
+  background-color: #d6eaff; /* Light blue */
+  align-self: flex-start;
+}
+
+.chat-D {
+  background-color: #e5d6f8; /* Light purple */
+  align-self: flex-end;
+}
+
+.chat-E {
+  background-color: #d6f8f2; /* Light teal */
+  align-self: flex-start;
+}
+
+.chat-message strong {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

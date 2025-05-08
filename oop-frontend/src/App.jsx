@@ -51,6 +51,7 @@ export default function App(){
     policies: {},
   });
   const [players, setPlayers] = useState([]);
+  const [problemOptions, setProblemOptions] = useState([]);
 
   // --- seçim akışı handler'ları ---
   const handleStartClick = () => setGameStage("selectPlayers");
@@ -92,9 +93,21 @@ export default function App(){
       setGameId(response.gameId);
       setGlobalProblem(gameData.problem?.description || "");
       
-      // Set initial options directly to chatMessages
       if (gameData.problem?.options) {
-        setChatMessages(gameData.problem.options);
+        setProblemOptions(gameData.problem.options);
+      }
+      
+      // Add initial problem to chat messages
+      if (gameData.problem?.description) {
+        const problemDescription = gameData.problem.description;
+        setGlobalProblem(problemDescription);
+        
+        setChatMessages([
+          {
+            type: 'problem',
+            text: problemDescription
+          }
+        ]);
       }
       
       // Oyuncuları kaydet
@@ -181,43 +194,41 @@ export default function App(){
       console.error("Geçersiz seçenek seçildi:", opt);
       return;
     }
-    
+
     console.log("Seçilen seçenek:", opt);
+    const currentCountry = playerCountries[currentCountryIndex];
+
+    // Add the selected option to the chat history
+    setChatMessages(prevMessages => [
+      ...prevMessages,
+      { country: currentCountry, text: opt.text }
+    ]);
+
     try {
+      // Convert welfareEffect to a number explicitly
+      const welfareEffect = Number(opt.welfareEffect);
       const payload = {
-        country: playerCountries[currentCountryIndex],
-        welfareEffect: opt.welfareEffect || 0,
-        economyEffect: opt.economyEffect || 0
+        country: currentCountry,
+        welfareEffect: isNaN(welfareEffect) ? 0 : welfareEffect
       };
 
       console.log("Gönderilen veri:", payload);
-      
-      const response = await axios.put(
-        `http://localhost:8080/api/game/info/${gameId}`, 
-        payload
-      );
-      
+      const response = await axios.put(`http://localhost:8080/api/game/info/${gameId}`, payload);
       console.log("Seçenek uygulandı:", response.data);
-
-      // Güncellenmiş skorları almak için fetchGameInfo çağrısı ekleyin
-      await fetchGameInfo();
-
-      // Sıradaki oyuncuya geç
+    } catch (error) {
+      console.error("Seçenek uygulanamadı:", error.response?.data || error);
+    } finally {
       if (currentCountryIndex < playerCountries.length - 1) {
-        setCurrentCountryIndex(prev => prev + 1);
+        setCurrentCountryIndex(prevIndex => prevIndex + 1);
       } else {
-        // Tüm oyuncular seçim yaptığında puanlama fazına geç
-        setCurrentCountryIndex(0); // Sıfırla
+        setCurrentCountryIndex(0);
         setIsScoringPhase(true);
         setScoreTurnIndex(0);
       }
-
-    } catch (error) {
-      console.error("Seçenek uygulanamadı:", error.response?.data || error);
     }
-};
+  };
 
-const handleVoteSubmit = async (votes) => {
+  const handleVoteSubmit = async (votes) => {
     const voter = playerCountries[scoreTurnIndex];
     const newScores = {...scores}, newCounts={...voteCounts};
     
@@ -240,7 +251,7 @@ const handleVoteSubmit = async (votes) => {
       const newRoundsPlayed = roundsPlayed + 1;
       setRoundsPlayed(newRoundsPlayed);
       
-      if (newRoundsPlayed >= 9) {
+      if (newRoundsPlayed >= 3) {
         console.log("3 tur tamamlandı, oyun bitti!");
         setGameStage("gameOver");
         return;
@@ -250,7 +261,7 @@ const handleVoteSubmit = async (votes) => {
       console.log("Tur tamamlandı, yeni problem alınıyor...");
       await fetchProblem();
     }
-};
+  };
 
   // Oyun başladığında veya gameId değiştiğinde oyun bilgilerini çek
   useEffect(() => {
@@ -304,21 +315,25 @@ const handleVoteSubmit = async (votes) => {
     try {
       const response = await axios.get(`http://localhost:8080/api/game/problem/next/${gameId}`);
       console.log("Backend'den gelen yanıt:", response.data);
-
-      // Backend'den gelen veri yapısı:
-      // {
-      //   problem: { id, description, options },
-      //   options: []
-      // }
       
       if (response.data?.problem?.description) {
         // Problem açıklamasını ayarla
-        setGlobalProblem(response.data.problem.description);
-        console.log("Yeni problem ayarlandı:", response.data.problem.description);
+        const problemDescription = response.data.problem.description;
+        setGlobalProblem(problemDescription);
+        console.log("Yeni problem ayarlandı:", problemDescription);
+        
+        // Add problem to chat messages
+        setChatMessages(prevMessages => [
+          ...prevMessages,
+          {
+            type: 'problem',
+            text: problemDescription
+          }
+        ]);
         
         // Backend'den gelen seçenekleri kullan
         if (Array.isArray(response.data.options)) {
-          setChatMessages(response.data.options);
+          setProblemOptions(response.data.options);
           console.log("Yeni seçenekler ayarlandı:", response.data.options);
         } else {
           console.error("Seçenekler dizi formatında değil:", response.data.options);
@@ -388,21 +403,22 @@ const handleVoteSubmit = async (votes) => {
         <LeftPanel
           playerCountries={playerCountries}
           onCountrySelect={c => setViewCountry(c)}
-          econScores={gameInfo.econScores}
-          welfareScores={gameInfo.welfareScores}
-          countryPolicies={countryPolicies}
+          problem={globalProblem}
+          options={problemOptions}
+          onSelectOption={handleOptionSelect}
+          voter={isScoringPhase 
+            ? playerCountries[scoreTurnIndex] // Puanlama fazındaki ülke
+            : playerCountries[currentCountryIndex] // Seçim fazındaki ülke
+          }
         />
       );
       
       const right = (
         <RightPanel
-          problem={globalProblem}
-          options={chatMessages} // Artık chatMessages kullanılıyor
-          onSelectOption={handleOptionSelect}
           isScoringPhase={isScoringPhase}
           voter={isScoringPhase 
-            ? playerCountries[scoreTurnIndex] // Puanlama fazındaki ülke
-            : playerCountries[currentCountryIndex] // Seçim fazındaki ülke
+            ? playerCountries[scoreTurnIndex]
+            : playerCountries[currentCountryIndex]
           }
           onVote={handleVoteSubmit}
           totalScores={scores}

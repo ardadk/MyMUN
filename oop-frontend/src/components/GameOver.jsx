@@ -7,11 +7,11 @@ export default function GameOver({ onRestart, totalScores, voteCounts, players, 
     <div className="game-over">
       <div className="game-over-content">
         <h1>Oyun Bitti!</h1>
-        <p>10 tur tamamladınız. Tebrikler!</p>
+        <p>5 tur tamamladınız. Tebrikler!</p>
         
         <div className="final-scores-container">
           <h2>Final Puanları</h2>
-          <Scoreboard totalScores={totalScores} voteCounts={voteCounts} />
+          <Scoreboard totalScores={totalScores} voteCounts={voteCounts} players={players} gameInfo={gameInfo} />
           
           <div className="player-stats">
             <h3>Ülke Durumları</h3>

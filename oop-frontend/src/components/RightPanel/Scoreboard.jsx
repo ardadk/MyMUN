@@ -1,70 +1,77 @@
 import './Scoreboard.css';
 import { useEffect } from 'react';
 
-export default function Scoreboard({ totalScores = {}, voteCounts= {}, players= [] , gameInfo= {} }) {
-  // Bileşenin render edildiğini kontrol et
-  console.log("Scoreboard bileşeni render ediliyor");
-  
-  // Props kontrolü
-  console.log("selam")
-  console.log("totalScores:", totalScores);
-  console.log("voteCounts:", voteCounts);
-  console.log("gameInfo:", gameInfo);
-  // gameInfo'nun yapısını daha iyi anlamak için:
-  console.log("gameInfo detaylı:", JSON.stringify(gameInfo, null, 2));
-  
-  // Api'den hangi anahtarlar geliyor, kontrol et
+export default function Scoreboard({ totalScores = {}, voteCounts = {}, players = [], gameInfo = {} }) {
   useEffect(() => {
-    if (gameInfo) {
-      console.log("gameInfo anahtarları:", Object.keys(gameInfo));
-    }
-  }, [gameInfo]);
+    console.log("Scoreboard Debug:", {
+      hasPlayers: Boolean(players),
+      playersLength: players?.length,
+      playersData: players,
+      gameInfoExists: Boolean(gameInfo),
+      gameInfoData: gameInfo,
+      totalScores,
+      voteCounts
+    });
+  }, [players, gameInfo, totalScores, voteCounts]);
 
-  // Ülkeleri al
-  const countries = Object.keys(totalScores);
-  console.log("Ülkeler:", countries);
-  
+  // Check if players data is valid
+  if (!Array.isArray(players) || players.length === 0) {
+    console.warn("Players data is invalid:", {
+      isArray: Array.isArray(players),
+      length: players?.length,
+      players
+    });
+    return <div className="scoreboard"><h3>Oyuncu verisi bekleniyor...</h3></div>;
+  }
+
+  // Check if gameInfo has required data
+  if (!gameInfo?.econScores || !gameInfo?.welfareScores) {
+    console.warn("GameInfo is missing required data:", gameInfo);
+    return <div className="scoreboard"><h3>Oyun verileri yükleniyor...</h3></div>;
+  }
+
   // Skorları hesapla
-  const combinedScores = countries.map(country => {
-    const total = totalScores[country] || 0;
-    const count = voteCounts[country] || 1;
+  const combinedScores = players.map(player => {
+    const economyScore = gameInfo.econScores[player.countryName] || 0;
+    const welfareScore = gameInfo.welfareScores[player.countryName] || 0;
+    const total = totalScores[player.countryName] || 0;
+    const count = voteCounts[player.countryName] || 1;
     const rating = (total / count);
-    
-    // GameOver.jsx'teki yaklaşımı burada da kullanalım
-    // Önce gameInfo'dan, yoksa players'dan bul
-    const player = players.find(p => p.countryName === country);
-    const economyScore = gameInfo?.economyScores?.[player?.countryName] || (player?.economyScore) || 0;
-    const welfareScore = gameInfo?.welfareScores?.[player?.countryName] || (player?.welfareScore) || 0;
-    
-    console.log(`${country} için değerler:`, { economyScore, welfareScore, rating });
-    
-    const combinedScore = ((economyScore / 10) + (welfareScore / 10) + rating).toFixed(1);
-    
-    return [country, combinedScore, (economyScore / 10).toFixed(1), (welfareScore / 10).toFixed(1), rating.toFixed(1)];
+
+    return {
+      country: player.countryName,
+      combinedScore: (economyScore + welfareScore + rating).toFixed(1),
+      economy: economyScore.toFixed(1),
+      welfare: welfareScore.toFixed(1),
+      rating: rating.toFixed(1)
+    };
   });
-  
-  // Sırala
-  const sorted = combinedScores.sort((a, b) => b[1] - a[1]);
-  console.log("Sıralanmış skorlar:", sorted);
+
+  // Skorları sırala
+  const sorted = [...combinedScores].sort((a, b) => 
+    parseFloat(b.combinedScore) - parseFloat(a.combinedScore)
+  );
 
   return (
     <div className="scoreboard">
       <h3>TOPLAM PUANLAR</h3>
-      <ul>
-        {sorted.map(([country, total, economy, welfare, rating], index) => (
-          <li key={country} className={country.toLowerCase()}>
-            <div className="country-name">{country}</div>
-            <div className="score-breakdown">
-              <span className="total-score">{total}</span>
-              <div className="score-details">
-                <div>Ekon: {economy}</div>
-                <div>Refah: {welfare}</div>
-                <div>Oy: {rating}</div>
+      {sorted.length > 0 ? (
+        <ul>
+          {sorted.map(({ country, combinedScore, economy, welfare, rating }) => (
+            <li key={country}>
+              <strong>{country}</strong>
+              <div>
+                <span>Toplam: {combinedScore} | </span>
+                <span>(Ekonomi: {economy}/10 + </span>
+                <span>Refah: {welfare}/10 + </span>
+                <span>Oy: {rating})</span>
               </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>Henüz puan yok</p>
+      )}
     </div>
   );
 }

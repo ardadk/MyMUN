@@ -1,10 +1,33 @@
 /* src/components/GameScreenLayout.css */
-.game-screen { padding: 1rem; }
-.game-layout { display: flex; height: 100%; }
+.game-screen { 
+  padding: 1rem; 
+  height: 100vh;
+  position: relative;
+  overflow-x: hidden; /* Hide horizontal overflow */
+  max-width: calc(100% - 270px); /* Make room for the scoreboard */
+}
+
+.game-layout { 
+  display: flex; 
+  height: 100%; 
+  gap: 20px;
+  position: relative;
+  width: 100%; /* Make sure it takes full width */
+}
+
 .game-left-panel,
 .game-right-panel {
-  flex: 1;
-  padding: 0.5rem;
+  padding: 1rem;
   overflow-y: auto;
+  border-radius: 10px;
+  background-color: #f5f5f5;
 }
-.game-left-panel { border-right: 2px solid #ccc; }
+
+.game-left-panel {
+  flex: 3; /* Left panel takes 60% of space */
+}
+
+.game-right-panel {
+  flex: 2; /* Right panel takes 40% of space */
+  position: relative; /* Add this to properly position the scoreboard */
+}
