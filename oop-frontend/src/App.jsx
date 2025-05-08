@@ -308,6 +308,8 @@ export default function App(){
       
       // Check if we've reached 3 rounds
       if (newRoundsPlayed >= 3) {
+        console.log("3 tur tamamlandı, oyun bitti!");
+        // Oyun sonu ekranına geç
         setGameStage("gameOver");
         return; // Exit early to avoid fetching a new problem
       }
@@ -485,7 +487,14 @@ export default function App(){
       return <GameScreenLayout left={left} right={right}/>;
 
     case "gameOver":
-      return <GameOver onRestart={handleRestart} />;
+      return (
+        <GameOver 
+          onRestart={handleRestart}
+          totalScores={scores}
+          voteCounts={voteCounts}
+          players={players}
+        />
+      );
 
     default:
       return <div>Bir şeyler ters gitti…</div>;
