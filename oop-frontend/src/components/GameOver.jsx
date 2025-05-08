@@ -2,7 +2,7 @@ import React from 'react';
 import './Css/GameOver.css';
 import Scoreboard from './RightPanel/Scoreboard';
 
-export default function GameOver({ onRestart, totalScores, voteCounts, players, gameInfo, welfareScore, econScores }) {
+export default function GameOver({ onRestart, totalScores, voteCounts, players, gameInfo}) {
   return (
     <div className="game-over">
       <div className="game-over-content">

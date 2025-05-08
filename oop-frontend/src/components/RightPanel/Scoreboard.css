@@ -26,3 +26,30 @@
 .scoreboard li.e {
   background: linear-gradient(135deg, #4b7bec 0%,  #663399 100%);
 }
+
+/* Scoreboard.css dosyasına eklenecek */
+.score-breakdown {
+  display: flex;
+  align-items: center;
+}
+
+.total-score {
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-right: 8px;
+}
+
+.score-details {
+  display: flex;
+  font-size: 0.8em;
+  color: #888;
+}
+
+.score-details div {
+  margin-right: 8px;
+}
+
+.country-name {
+  font-weight: bold;
+  margin-right: 5px;
+}

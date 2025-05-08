@@ -11,6 +11,7 @@ import LeftPanel        from './components/LeftPanel';
 import RightPanel       from './components/RightPanel/RightPanel';
 import CountryPage      from './components/CountryPage/CountryPage';
 import GameOver         from './components/GameOver';
+import Scoreboard from './components/RightPanel/Scoreboard';
 
 import { Player } from './models/Player';
 import { GameService } from './services/GameService';
@@ -271,7 +272,8 @@ const handleVoteSubmit = async (votes) => {
     try {
       console.log(`${gameId} ID'li oyun için bilgiler alınıyor...`);
       const response = await axios.get(`http://localhost:8080/api/game/info/${gameId}`);
-      
+      console.log("gameInfo içeriği alt satırda:")
+      console.log(response.data)
       // Yanıtı gameInfo'ya set et
       setGameInfo(response.data);
       setCountryPolicies(response.data.policies || {});
@@ -409,7 +411,16 @@ const handleVoteSubmit = async (votes) => {
         />
       );
 
-      return <GameScreenLayout left={left} right={right}/>;
+      return (
+        <GameScreenLayout left={left} right={right}>
+          <Scoreboard 
+            totalScores={scores} 
+            voteCounts={voteCounts}
+            players={players} 
+            gameInfo={gameInfo}
+          />
+        </GameScreenLayout>
+      );
 
     case "gameOver":
       return (

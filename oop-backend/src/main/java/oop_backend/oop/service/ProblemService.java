@@ -1,7 +1,6 @@
 package oop_backend.oop.service;
 
 import oop_backend.oop.model.WorldProblem;
-import oop_backend.oop.model.ProblemOption;
 import java.util.List;
 import java.util.Optional;
 
