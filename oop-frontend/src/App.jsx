@@ -10,6 +10,7 @@ import GameScreenLayout from './components/GameScreenLayout';
 import LeftPanel        from './components/LeftPanel';
 import RightPanel       from './components/RightPanel/RightPanel';
 import CountryPage      from './components/CountryPage/CountryPage';
+import GameOver         from './components/GameOver';
 
 import { Player } from './models/Player';
 import { GameService } from './services/GameService';
@@ -37,6 +38,7 @@ export default function App(){
   const [scores, setScores] = useState({});
   const [voteCounts, setVoteCounts] = useState({});
   const [chatOptionsMap, setChatOptionsMap] = useState({});
+  const [roundsPlayed, setRoundsPlayed] = useState(0);
   // --- hangi ülke detaya bakıyor ---
   const [viewCountry, setViewCountry] = useState(null);
   // --- oyun kimliği ---
@@ -166,6 +168,9 @@ export default function App(){
   };
 
   const handleRestart = () => {
+    // Reset rounds counter
+    setRoundsPlayed(0);
+    
     // tüm state'leri sıfırla
     setGameStage("start");
     setSelectedPlayersCount(1);
@@ -296,6 +301,16 @@ export default function App(){
       setIsScoringPhase(false);
       setScoreTurnIndex(0);
       setCurrentCountryIndex(0);
+      
+      // Increment the rounds played counter
+      const newRoundsPlayed = roundsPlayed + 1;
+      setRoundsPlayed(newRoundsPlayed);
+      
+      // Check if we've reached 3 rounds
+      if (newRoundsPlayed >= 3) {
+        setGameStage("gameOver");
+        return; // Exit early to avoid fetching a new problem
+      }
       
       console.log("Tur tamamlandı, yeni problem alınıyor...");
       
@@ -468,6 +483,9 @@ export default function App(){
       );
 
       return <GameScreenLayout left={left} right={right}/>;
+
+    case "gameOver":
+      return <GameOver onRestart={handleRestart} />;
 
     default:
       return <div>Bir şeyler ters gitti…</div>;

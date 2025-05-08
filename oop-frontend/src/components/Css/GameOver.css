@@ -1,0 +1,56 @@
+.game-over {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #4a1a85 0%, #2b2084 100%);
+  padding: 2rem;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  color: #fff;
+  text-align: center;
+}
+
+.game-over-content {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 90%;
+  width: 600px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.game-over h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.game-over p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.restart-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border: none;
+  border-radius: 9999px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.1s, background 0.2s;
+}
+
+.restart-button:hover {
+  background: linear-gradient(90deg, #5a67d8, #663399);
+  transform: translateY(-1px);
+}
+
+.restart-button:active {
+  background: linear-gradient(90deg, #4c51bf, #5a189a);
+  transform: translateY(0);
+}
