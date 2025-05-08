@@ -24,11 +24,4 @@ public interface ProblemService {
      * @return Tüm problemlerin listesi
      */
     List<WorldProblem> getAllProblems();
-    
-    /**
-     * Belirtilen adım için problemin seçeneklerini döndürür
-     * @param step Adım ID'si
-     * @return Seçenek listesi
-     */
-    List<ProblemOption> getOptionsForStep(String step);
 }
