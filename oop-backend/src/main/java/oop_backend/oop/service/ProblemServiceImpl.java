@@ -70,25 +70,25 @@ public class ProblemServiceImpl implements ProblemService {
         
         // Su krizi problemi
         List<ProblemOption> waterOptions = new ArrayList<>();
-        waterOptions.add(new ProblemOption("w1", "Ülkende su tüketimi tasarrufu kanunu çıkar", "water_save", 0, 2));
-        waterOptions.add(new ProblemOption("w2", "Dış ülkelerden su ithal et", "water_import", -2, 3));
-        waterOptions.add(new ProblemOption("w3", "Dış ülkelere su sat", "water_export", 3, -1));
+        waterOptions.add(new ProblemOption("w1", "Ülkende su tüketimi tasarrufu kanunu çıkar", "water_save",  2));
+        waterOptions.add(new ProblemOption("w2", "Dış ülkelerden su ithal et", "water_import", - 3));
+        waterOptions.add(new ProblemOption("w3", "Dış ülkelere su sat", "water_export",  -1));
         
         problemList.add(new WorldProblem("water_crisis", "Dünya'da su krizi yaşanıyor.", waterOptions));
         
         // Küresel ısınma problemi
         List<ProblemOption> climateOptions = new ArrayList<>();
-        climateOptions.add(new ProblemOption("c1", "Karbon emisyonlarını azaltacak yasalar çıkar", "climate_laws", -1, 2));
-        climateOptions.add(new ProblemOption("c2", "Yeşil enerji teknolojilerine yatırım yap", "green_tech", 1, 1));
-        climateOptions.add(new ProblemOption("c3", "Uluslararası iklim anlaşmalarından çekil", "climate_withdraw", 2, -2));
+        climateOptions.add(new ProblemOption("c1", "Yenilenebilir enerji yatırımlarını artır", "renewable_energy", 2));
+        climateOptions.add(new ProblemOption("c2", "Karbon vergisi getir", "carbon_tax", -1));
+        climateOptions.add(new ProblemOption("c3", "Uluslararası anlaşmalara katıl", "international_agreements", 0));
         
         problemList.add(new WorldProblem("climate_change", "Küresel ısınma kritik seviyelere ulaştı.", climateOptions));
         
         // Ekonomik kriz problemi
         List<ProblemOption> economyOptions = new ArrayList<>();
-        economyOptions.add(new ProblemOption("e1", "Kemer sıkma politikaları uygula", "austerity", 2, -1));
-        economyOptions.add(new ProblemOption("e2", "Dış borç al", "foreign_debt", 3, 1));
-        economyOptions.add(new ProblemOption("e3", "Ekonomik teşvik paketleri açıkla", "stimulus", -2, 3));
+        economyOptions.add(new ProblemOption("e1", "Kemer sıkma politikaları uygula", "austerity", -1));
+        economyOptions.add(new ProblemOption("e2", "Dış borç al", "foreign_debt", 1));
+        economyOptions.add(new ProblemOption("e3", "Ekonomik teşvik paketleri açıkla", "stimulus", 3));
         
         problemList.add(new WorldProblem("economic_crisis", "Dünya çapında bir ekonomik kriz başladı.", economyOptions));
         
@@ -101,41 +101,41 @@ public class ProblemServiceImpl implements ProblemService {
         
         // Su krizi sonraki adımları
         List<ProblemOption> waterSave = new ArrayList<>();
-        waterSave.add(new ProblemOption("ws1", "Su dağıtımını devlet kontrolüne al", "water_end", 1, 2));
-        waterSave.add(new ProblemOption("ws2", "Özel sektörü su tasarrufu için teşvik et", "water_end", 2, 1));
+        waterSave.add(new ProblemOption("ws1", "Su dağıtımını devlet kontrolüne al", "water_end",  2));
+        waterSave.add(new ProblemOption("ws2", "Özel sektörü su tasarrufu için teşvik et", "water_end",  1));
         options.put("water_save", waterSave);
         
         List<ProblemOption> waterImport = new ArrayList<>();
-        waterImport.add(new ProblemOption("wi1", "Komşu ülkelerle uzun vadeli su anlaşmaları imzala", "water_end", 2, 2));
-        waterImport.add(new ProblemOption("wi2", "Su ithalini geçici bir çözüm olarak gör ve alternatif yöntemler araştır", "water_end", 0, 1));
+        waterImport.add(new ProblemOption("wi1", "Komşu ülkelerle uzun vadeli su anlaşmaları imzala", "water_end",  2));
+        waterImport.add(new ProblemOption("wi2", "Su ithalini geçici bir çözüm olarak gör ve alternatif yöntemler araştır", "water_end", 1));
         options.put("water_import", waterImport);
         
         List<ProblemOption> waterExport = new ArrayList<>();
-        waterExport.add(new ProblemOption("we1", "Su kaynaklarını stratejik bir varlık olarak koruma altına al", "water_end", 1, 1));
-        waterExport.add(new ProblemOption("we2", "Su satışından elde edilen geliri altyapı yatırımlarına yönlendir", "water_end", 3, 0));
+        waterExport.add(new ProblemOption("we1", "Su kaynaklarını stratejik bir varlık olarak koruma altına al", "water_end",  1));
+        waterExport.add(new ProblemOption("we2", "Su satışından elde edilen geliri altyapı yatırımlarına yönlendir", "water_end",  0));
         options.put("water_export", waterExport);
         
         // water_end için de seçenekler ekle (bu adım eksikti)
         List<ProblemOption> waterEnd = new ArrayList<>();
-        waterEnd.add(new ProblemOption("wend1", "Sonraki tura geç", "start", 0, 0));
+        waterEnd.add(new ProblemOption("wend1", "Sonraki tura geç", "start",  0));
         options.put("water_end", waterEnd);
         
         // Küresel ısınma sonraki adımları
         List<ProblemOption> climateLaws = new ArrayList<>();
-        climateLaws.add(new ProblemOption("cl1", "Karbon emisyonlarını azaltmaya devam et", "climate_end", -1, 2));
-        climateLaws.add(new ProblemOption("cl2", "Yeşil enerji projelerini hızlandır", "climate_end", 2, 1));
+        climateLaws.add(new ProblemOption("cl1", "Karbon emisyonlarını azaltmaya devam et", "climate_end",  2));
+        climateLaws.add(new ProblemOption("cl2", "Yeşil enerji projelerini hızlandır", "climate_end",  1));
         options.put("climate_laws", climateLaws);
 
         List<ProblemOption> greenTech = new ArrayList<>();
-        greenTech.add(new ProblemOption("gt1", "Yeşil enerji projelerine daha fazla yatırım yap", "green_end", 2, 2));
-        greenTech.add(new ProblemOption("gt2", "Yeşil enerji projelerini durdur ve fosil yakıtlara dön", "green_end", -2, -2));
+        greenTech.add(new ProblemOption("gt1", "Yeşil enerji projelerine daha fazla yatırım yap", "green_end",  2));
+        greenTech.add(new ProblemOption("gt2", "Yeşil enerji projelerini durdur ve fosil yakıtlara dön", "green_end", -2));
         options.put("green_tech", greenTech);
         
         // Diğer adımlar için seçenekler...
         
         // Son adım seçenekleri için sonlandırma bildirimi
         List<ProblemOption> endOptions = new ArrayList<>();
-        endOptions.add(new ProblemOption("end1", "Sonraki tura geç", "start", 0, 0));
+        endOptions.add(new ProblemOption("end1", "Sonraki tura geç", "start",  0));
         
         // Tüm end adımları için varsayılan seçenekleri ekle
         options.put("climate_end", endOptions);

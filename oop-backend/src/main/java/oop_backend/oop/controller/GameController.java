@@ -44,7 +44,7 @@ public class GameController {
             WorldProblem selectedProblem = problemService.selectRandomProblem();
             System.out.println("Seçilen problem: " + selectedProblem);
             
-            // Başlangıç seçeneklerini al (burayı kontrol et)
+            // Başlangıç seçeneklerini al
             List<ProblemOption> initialOptions = problemService.getOptionsForStep("start");
             System.out.println("Başlangıç seçenekleri: " + initialOptions);
             
@@ -53,9 +53,8 @@ public class GameController {
                 initialOptions = new ArrayList<>();
                 ProblemOption defaultOption = new ProblemOption();
                 defaultOption.setId("default");
-                defaultOption.setText("Ekonomik krize karşı önlem al");
-                defaultOption.setNext("economy_action");
-                defaultOption.setEconomyEffect(1);
+                defaultOption.setText("Önlem al");
+                defaultOption.setNext("action_step");
                 defaultOption.setWelfareEffect(0);
                 initialOptions.add(defaultOption);
             }
@@ -69,9 +68,7 @@ public class GameController {
                 Player player = new Player(playerRequest.getUserId(), playerRequest.getCountryName());
                 player.setPolicy(policyService.getRandomPolicy());
                 
-                // Yeni eklenen ekonomi ve refah durumu için başlangıç değerleri
-                player.setEconomyScore(10);
-                player.setWelfareScore(3);
+                
                 
                 players.add(player);
             }
@@ -116,7 +113,6 @@ public class GameController {
                     "default_option",
                     "Sonraki tura geç",
                     "start",
-                    0,
                     0
                 ));
                 
@@ -135,7 +131,6 @@ public class GameController {
                 "error_option",
                 "Bir hata oluştu, sonraki tura geç",
                 "start",
-                0,
                 0
             ));
             
@@ -310,58 +305,41 @@ public class GameController {
     @PutMapping("/info/{gameId}")
     public ResponseEntity<?> updatePlayerScores(@PathVariable("gameId") String gameId, @RequestBody Map<String, Object> scoreUpdate) {
         try {
-            System.out.println("updatePlayerScores çağrıldı - gameId: " + gameId);
-            System.out.println("Gelen veri: " + scoreUpdate);
-            
-            if (!scoreUpdate.containsKey("country") || !scoreUpdate.containsKey("economyEffect") || 
-                !scoreUpdate.containsKey("welfareEffect")) {
-                System.out.println("HATA: Gerekli parametreler eksik");
-                return ResponseEntity.badRequest().body(Map.of("error", "Gerekli parametreler eksik"));
+            List<Player> players = gamePlayerMap.get(gameId);
+            if (players == null) {
+                return ResponseEntity.notFound().build();
             }
-            
-            String countryName = String.valueOf(scoreUpdate.get("country"));
-            
-            // Tip dönüşümü güvenli bir şekilde yapılıyor
-            int economyEffect;
+
+            String country = (String) scoreUpdate.get("country");
+            if (country == null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Ülke adı belirtilmedi"));
+            }
+
+            // Sadece welfare effect için dönüşüm yap
             int welfareEffect;
             try {
-                economyEffect = Integer.parseInt(String.valueOf(scoreUpdate.get("economyEffect")));
+                // economyEffect kodu silindi
                 welfareEffect = Integer.parseInt(String.valueOf(scoreUpdate.get("welfareEffect")));
             } catch (NumberFormatException e) {
                 System.out.println("HATA: Sayısal değerler geçerli formatta değil");
                 return ResponseEntity.badRequest().body(Map.of("error", "Sayısal değerler geçerli formatta değil"));
             }
-            
-            List<Player> players = gamePlayerMap.get(gameId);
-            if (players == null) {
-                System.out.println("HATA: " + gameId + " için oyuncu listesi bulunamadı!");
-                return ResponseEntity.notFound().build();
-            }
-            
-            for (Player player : players) {
-                if (player.getCountryName().equals(countryName)) {
-                    // Mevcut değerleri al ve güncelle
-                    int newEconomy = player.getEconomyScore() + economyEffect * 10;
-                    int newWelfare = player.getWelfareScore() + welfareEffect * 10;
-                    
-                    // Skorları güncelle
-                    player.setEconomyScore(newEconomy);
-                    player.setWelfareScore(newWelfare);
-                    
-                    System.out.println("Skorlar güncellendi - Ülke: " + player.getCountryName() + 
-                                 ", Ekonomi: " + player.getEconomyScore() + 
-                                 ", Refah: " + player.getWelfareScore());
 
-                    Map<String, Object> result = new HashMap<>();
-                    result.put("country", countryName);
-                    result.put("economyScore", player.getEconomyScore());
-                    result.put("welfareScore", player.getWelfareScore());
-                    
-                    return ResponseEntity.ok(result);
+            boolean playerUpdated = false;
+            for (Player player : players) {
+                if (player.getCountryName().equals(country)) {
+                    // Economy değeri değişmez, sadece welfare güncellenir
+                    player.setWelfareScore(player.getWelfareScore() + welfareEffect * 10);
+                    playerUpdated = true;
+                    break;
                 }
             }
-            
-            return ResponseEntity.notFound().build();
+
+            if (!playerUpdated) {
+                return ResponseEntity.notFound().build();
+            }
+
+            return ResponseEntity.ok(Map.of("success", true, "message", "Oyuncu refah skoru güncellendi"));
         } catch (Exception e) {
             System.out.println("HATA: " + e.getMessage());
             e.printStackTrace();

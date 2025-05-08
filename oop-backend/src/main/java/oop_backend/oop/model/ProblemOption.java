@@ -4,16 +4,14 @@ public class ProblemOption {
     private String id;
     private String text;
     private String next;
-    private int economyEffect;
     private int welfareEffect;
     
     public ProblemOption() {}
     
-    public ProblemOption(String id, String text, String next, int economyEffect, int welfareEffect) {
+    public ProblemOption(String id, String text, String next, int welfareEffect) {
         this.id = id;
         this.text = text;
         this.next = next;
-        this.economyEffect = economyEffect;
         this.welfareEffect = welfareEffect;
     }
     
@@ -40,14 +38,6 @@ public class ProblemOption {
     
     public void setNext(String next) {
         this.next = next;
-    }
-    
-    public int getEconomyEffect() {
-        return economyEffect;
-    }
-    
-    public void setEconomyEffect(int economyEffect) {
-        this.economyEffect = economyEffect;
     }
     
     public int getWelfareEffect() {

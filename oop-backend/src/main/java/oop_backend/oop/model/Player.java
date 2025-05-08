@@ -12,7 +12,7 @@ public class Player {
     public Player() {
         this.rating = 0; // Başlangıç değeri
         this.economyScore = 31; // Başlangıç değeri
-        this.welfareScore = 50; // Başlangıç değeri
+        this.welfareScore = 40; // Başlangıç değeri
     }
     
     public Player(Long userId, String countryName) {
