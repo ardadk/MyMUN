@@ -198,6 +198,9 @@ export default function App(){
       
       console.log("Seçenek uygulandı:", response.data);
 
+      // Güncellenmiş skorları almak için fetchGameInfo çağrısı ekleyin
+      await fetchGameInfo();
+
       // Sıradaki oyuncuya geç
       if (currentCountryIndex < playerCountries.length - 1) {
         setCurrentCountryIndex(prev => prev + 1);
@@ -236,7 +239,7 @@ const handleVoteSubmit = async (votes) => {
       const newRoundsPlayed = roundsPlayed + 1;
       setRoundsPlayed(newRoundsPlayed);
       
-      if (newRoundsPlayed >= 3) {
+      if (newRoundsPlayed >= 9) {
         console.log("3 tur tamamlandı, oyun bitti!");
         setGameStage("gameOver");
         return;
@@ -415,6 +418,7 @@ const handleVoteSubmit = async (votes) => {
           totalScores={scores}
           voteCounts={voteCounts}
           players={players}
+          gameInfo={gameInfo}  // gameInfo prop'unu ekliyoruz
         />
       );
 

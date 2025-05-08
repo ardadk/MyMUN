@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import oop_backend.oop.model.StartGameRequest;
 import oop_backend.oop.model.Player;
 import oop_backend.oop.model.WorldProblem;
-import oop_backend.oop.model.ProblemOption;
 import oop_backend.oop.service.GameService;
 import oop_backend.oop.service.ProblemService;
 import oop_backend.oop.service.PolicyService;
@@ -114,41 +113,59 @@ public class GameController {
 
     @PutMapping("/info/{gameId}")
     public ResponseEntity<?> updatePlayerScores(@PathVariable("gameId") String gameId, @RequestBody Map<String, Object> scoreUpdate) {
+        System.out.println("updatePlayerScores çağrıldı - Game ID: " + gameId + ", Data: " + scoreUpdate);
+        
         try {
             List<Player> players = gamePlayerMap.get(gameId);
             if (players == null) {
+                System.out.println("HATA: " + gameId + " ID'li oyun bulunamadı");
                 return ResponseEntity.notFound().build();
             }
 
             String country = (String) scoreUpdate.get("country");
             if (country == null) {
+                System.out.println("HATA: Ülke adı belirtilmedi - GameID: " + gameId);
                 return ResponseEntity.badRequest().body(Map.of("error", "Ülke adı belirtilmedi"));
             }
 
             int welfareEffect;
+            int economyEffect;
             try {
                 welfareEffect = Integer.parseInt(String.valueOf(scoreUpdate.get("welfareEffect")));
+                economyEffect = Integer.parseInt(String.valueOf(scoreUpdate.get("economyEffect")));
+                System.out.println("Etki değerleri hesaplandı - WelfareEffect: " + welfareEffect + ", EconomyEffect: " + economyEffect);
             } catch (NumberFormatException e) {
-                System.out.println("HATA: Sayısal değerler geçerli formatta değil");
+                System.out.println("HATA: Sayısal değerler geçerli formatta değil - Values: " + scoreUpdate);
                 return ResponseEntity.badRequest().body(Map.of("error", "Sayısal değerler geçerli formatta değil"));
             }
 
             boolean playerUpdated = false;
             for (Player player : players) {
                 if (player.getCountryName().equals(country)) {
-                    player.setWelfareScore(player.getWelfareScore() + welfareEffect * 10);
+                    int oldWelfareScore = player.getWelfareScore();
+                    int oldEconomyScore = player.getEconomyScore();
+                    
+                    player.setWelfareScore(oldWelfareScore + welfareEffect * 10);
+                    player.setEconomyScore(oldEconomyScore + economyEffect * 10);
+                    
+                    System.out.println("Oyuncu skoru güncellendi - Ülke: " + country + 
+                                      ", Refah: " + oldWelfareScore + " -> " + player.getWelfareScore() + 
+                                      ", Ekonomi: " + oldEconomyScore + " -> " + player.getEconomyScore());
+                    
                     playerUpdated = true;
                     break;
                 }
             }
 
             if (!playerUpdated) {
+                System.out.println("HATA: " + country + " ülkesi için oyuncu bulunamadı - GameID: " + gameId);
                 return ResponseEntity.notFound().build();
             }
 
-            return ResponseEntity.ok(Map.of("success", true, "message", "Oyuncu refah skoru güncellendi"));
+            System.out.println("İşlem başarılı - Game ID: " + gameId + ", Ülke: " + country);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Oyuncu skorları güncellendi"));
         } catch (Exception e) {
-            System.out.println("HATA: " + e.getMessage());
+            System.out.println("HATA: İşlem sırasında beklenmeyen hata - " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
