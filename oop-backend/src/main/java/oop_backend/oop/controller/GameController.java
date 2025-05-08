@@ -161,7 +161,7 @@ public class GameController {
             // Counter'ı artır
             counter++;
             System.out.println("Counter değeri: " + counter);
-
+            //Yorum satırı
             // Counter 3 olduğunda kullanıcıyı game-over URL'sine yönlendir
             if (counter == 3) {
                 return ResponseEntity.status(302) // 302 Found (Redirect)
