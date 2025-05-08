@@ -5,17 +5,17 @@ import OptionButtons from './OptionButtons';
 import Scoreboard from './Scoreboard';
 import VoteForm from './VoteForm';
 
-export default function RightPanel({
-  problem,
-  currentCountry,
-  options,
-  onSelectOption,
-  isScoringPhase,
+const RightPanel = ({ 
+  problem, 
+  options, 
+  onSelectOption, 
+  isScoringPhase, 
   voter,
-  onVote,
-  totalScores,
-  voteCounts
-}) {
+  onVote, 
+  totalScores, 
+  voteCounts, 
+  chatMessages 
+}) => {
   if (isScoringPhase) {
     return (
       <div className="vote-section">
@@ -25,18 +25,25 @@ export default function RightPanel({
   }
 
   return (
-    <div className="right-panel-content">
-      <ProblemCard text={problem} />
-
-      <p className="current-speaker">
-        Sıradaki konuşmacı: <strong>Ülke {currentCountry}</strong>
-      </p>
-
-      <div className="options-card">
-        <OptionButtons options={options} onSelect={onSelectOption} />
+    <div className="right-panel">
+      {/* Sıradaki ülke gösterimi */}
+      <div className="current-player">
+        <p className="current-speaker">
+          Sıradaki konuşmacı: <strong>{voter || "..."}</strong>
+        </p>
       </div>
 
-      <Scoreboard totalScores={totalScores} voteCounts={voteCounts} />
+      <div className="right-panel-content">
+        <ProblemCard text={problem} />
+
+        <div className="options-card">
+          <OptionButtons options={options} onSelect={onSelectOption} />
+        </div>
+
+        <Scoreboard totalScores={totalScores} voteCounts={voteCounts} />
+      </div>
     </div>
   );
 }
+
+export default RightPanel;
