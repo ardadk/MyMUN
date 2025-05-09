@@ -15,6 +15,8 @@ export default function CountryPage({
   problem,
   totalScores,
   voteCounts,
+  players,
+  gameInfo,
   onBack
 }) {
   return (
@@ -34,9 +36,7 @@ export default function CountryPage({
         <div className="map-wrapper">
           <WorldMap selectedCountry={countryCode} onCountrySelect={() => {}} />
         </div>
-        <div className="scoreboard-wrapper">
-          <Scoreboard totalScores={totalScores} voteCounts={voteCounts} />
-        </div>
+       
       </div>
     </div>
   );

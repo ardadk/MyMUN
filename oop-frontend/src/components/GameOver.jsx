@@ -11,7 +11,9 @@ export default function GameOver({ onRestart, totalScores, voteCounts, players, 
         
         <div className="final-scores-container">
           <h2>Final Puanları</h2>
-          <Scoreboard totalScores={totalScores} voteCounts={voteCounts} />
+          <Scoreboard totalScores={totalScores} voteCounts={voteCounts}
+          players={players}
+    gameInfo={gameInfo} />
           
           <div className="player-stats">
             <h3>Ülke Durumları</h3>

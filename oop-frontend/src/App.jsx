@@ -240,7 +240,7 @@ const handleVoteSubmit = async (votes) => {
       const newRoundsPlayed = roundsPlayed + 1;
       setRoundsPlayed(newRoundsPlayed);
       
-      if (newRoundsPlayed >= 9) {
+      if (newRoundsPlayed >= 3) {
         console.log("3 tur tamamlandı, oyun bitti!");
         setGameStage("gameOver");
         return;
@@ -397,7 +397,7 @@ const handleVoteSubmit = async (votes) => {
       const right = (
         <RightPanel
           problem={globalProblem}
-          options={chatMessages} // Artık chatMessages kullanılıyor
+          options={chatMessages} 
           onSelectOption={handleOptionSelect}
           isScoringPhase={isScoringPhase}
           voter={isScoringPhase 
@@ -408,6 +408,8 @@ const handleVoteSubmit = async (votes) => {
           totalScores={scores}
           voteCounts={voteCounts}
           chatMessages={chatMessages}
+          players={players}      
+          gameInfo={gameInfo}    
         />
       );
 
@@ -429,7 +431,7 @@ const handleVoteSubmit = async (votes) => {
           totalScores={scores}
           voteCounts={voteCounts}
           players={players}
-          gameInfo={gameInfo}  // gameInfo prop'unu ekliyoruz
+          gameInfo={gameInfo} 
         />
       );
 

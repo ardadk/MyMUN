@@ -14,7 +14,9 @@ const RightPanel = ({
   onVote, 
   totalScores, 
   voteCounts, 
-  chatMessages 
+  chatMessages,
+  players,
+  gameInfo
 }) => {
   if (isScoringPhase) {
     return (
@@ -40,7 +42,7 @@ const RightPanel = ({
           <OptionButtons options={options} onSelect={onSelectOption} />
         </div>
 
-        <Scoreboard totalScores={totalScores} voteCounts={voteCounts} />
+       
       </div>
     </div>
   );

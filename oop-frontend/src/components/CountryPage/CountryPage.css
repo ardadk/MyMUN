@@ -25,6 +25,8 @@
   
   .map-wrapper {
     flex: 2;
+    height: 400px;
+    width: 600px;
   }
   
   .scoreboard-wrapper {
