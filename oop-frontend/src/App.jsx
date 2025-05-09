@@ -207,9 +207,11 @@ export default function App(){
     try {
       // Convert welfareEffect to a number explicitly
       const welfareEffect = Number(opt.welfareEffect);
+      const econEffect = Number(opt.econEffect);
       const payload = {
         country: currentCountry,
-        welfareEffect: isNaN(welfareEffect) ? 0 : welfareEffect
+        welfareEffect: isNaN(welfareEffect) ? 0 : welfareEffect,
+        econEffect: isNaN(econEffect) ? 0 : econEffect
       };
 
       console.log("Gönderilen veri:", payload);

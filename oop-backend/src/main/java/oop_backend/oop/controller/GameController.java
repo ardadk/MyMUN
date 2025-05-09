@@ -132,10 +132,10 @@ public class GameController {
             int economyEffect;
             try {
                 welfareEffect = Integer.parseInt(String.valueOf(scoreUpdate.get("welfareEffect")));
-                economyEffect = Integer.parseInt(String.valueOf(scoreUpdate.get("economyEffect")));
+                economyEffect = Integer.parseInt(String.valueOf(scoreUpdate.get("econEffect")));
                 System.out.println("Etki değerleri hesaplandı - WelfareEffect: " + welfareEffect + ", EconomyEffect: " + economyEffect);
             } catch (NumberFormatException e) {
-                System.out.println("HATA: Sayısal değerler geçerli formatta değil - Values: " + scoreUpdate);
+                System.out.println("HATA: Sayısal değerler geçerli formatta değil - Values: " + scoreUpdate+e);
                 return ResponseEntity.badRequest().body(Map.of("error", "Sayısal değerler geçerli formatta değil"));
             }
 
