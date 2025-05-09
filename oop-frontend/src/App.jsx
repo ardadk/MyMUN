@@ -217,39 +217,39 @@ export default function App(){
     }
 };
 
-const handleVoteSubmit = async (votes) => {
-    const voter = playerCountries[scoreTurnIndex];
-    const newScores = {...scores}, newCounts={...voteCounts};
-    
-    Object.entries(votes).forEach(([t,p]) => {
-      newScores[t] = (newScores[t] || 0) + p;
-      newCounts[t] = (newCounts[t] || 0) + 1;
-    });
-    
-    setScores(newScores);
-    setVoteCounts(newCounts);
+const handleVoteSubmit = (votes) => {
+  const newVoteCounts = { ...voteCounts };
+  
+  // Debug the incoming votes
+  console.log("Incoming votes:", votes);
+  
+  // Her oyuncu için oy sayısını güncelle - burada vote değerini kullanmalıyız
+  Object.entries(votes).forEach(([countryName, vote]) => {
+    // vote değerini sayısal olarak ekle
+    newVoteCounts[countryName] = (newVoteCounts[countryName] || 0) + Number(vote);
+    console.log(`${countryName} için yeni oy: ${newVoteCounts[countryName]}`);
+  });
+  
+  setVoteCounts(newVoteCounts);
+  console.log("Güncellenen oy sayıları:", newVoteCounts);
 
-    // Sıradaki oyuncuya geç
-    if (scoreTurnIndex < playerCountries.length - 1) {
-      setScoreTurnIndex(prev => prev + 1);
-    } else {
-      // Tüm oyuncular oy verdiğinde yeni tura geç
-      setIsScoringPhase(false);
-      setScoreTurnIndex(0);
-      
-      const newRoundsPlayed = roundsPlayed + 1;
-      setRoundsPlayed(newRoundsPlayed);
-      
-      if (newRoundsPlayed >= 3) {
-        console.log("3 tur tamamlandı, oyun bitti!");
+  // Sıradaki oyuncuya geç
+  if (scoreTurnIndex < playerCountries.length - 1) {
+    setScoreTurnIndex(prev => prev + 1);
+  } else {
+    setIsScoringPhase(false);
+    setScoreTurnIndex(0);
+    
+    setRoundsPlayed(prev => {
+      const newRounds = prev + 1;
+      if (newRounds >= 3) {
         setGameStage("gameOver");
-        return;
+      } else {
+        fetchProblem();
       }
-      
-      // Yeni tur için problem al
-      console.log("Tur tamamlandı, yeni problem alınıyor...");
-      await fetchProblem();
-    }
+      return newRounds;
+    });
+  }
 };
 
   // Oyun başladığında veya gameId değiştiğinde oyun bilgilerini çek

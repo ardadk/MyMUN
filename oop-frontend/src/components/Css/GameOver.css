@@ -18,7 +18,7 @@
   padding: 2rem;
   max-width: 90%;
   width: 600px;
-  backdrop-filter: blur(10px);
+ 
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
@@ -128,4 +128,52 @@
   border-radius: 0.5rem;
   display: flex;
   justify-content: space-between;
+}
+
+.winner-announcement {
+  background: linear-gradient(135deg, #ffd700 0%, #ffeb3b 100%);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  margin: 20px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.winner-announcement h2 {
+  color: #2c3e50;
+  margin: 0;
+  font-size: 2em;
+}
+
+.final-rankings {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.ranking-card {
+  color: black;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.ranking-card.winner {
+  border: 2px solid #ffd700;
+  background: linear-gradient(135deg, #fff9c4 0%, #ffffff 100%);
+}
+
+.score-breakdown {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.score-breakdown p {
+  margin: 0;
+  font-size: 0.9em;
+  color: #666;
 }
