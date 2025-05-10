@@ -180,42 +180,50 @@ export default function App() {
 
   // --- oynama akışı handler'ları ---
   const handleOptionSelect = async (opt) => {
-    if (!opt) {
-      console.error("Geçersiz seçenek seçildi:", opt);
-      return;
-    }
-
-    console.log("Seçilen seçenek:", opt);
     try {
+      if (!opt) return;
+
       const payload = {
         country: playerCountries[currentCountryIndex],
         welfareEffect: opt.welfareEffect || 0,
         economyEffect: opt.economyEffect || 0,
       };
 
-      console.log("Gönderilen veri:", payload);
-
       const response = await axios.put(
         `http://localhost:8080/api/game/info/${gameId}`,
         payload
       );
 
-      console.log("Seçenek uygulandı:", response.data);
-
-      // Güncellenmiş skorları almak için fetchGameInfo çağrısı ekleyin
       await fetchGameInfo();
+
+      // Yeni mesaj oluştur
+      const newMessage = {
+        country: playerCountries[currentCountryIndex],
+        turn: roundsPlayed + 1,
+        problem: globalProblem,
+        selectedOption: opt
+      };
+
+      // Önceki mesajları koruyarak güncelle
+      setChatMessages(prevMessages => {
+        // Mevcut seçenekleri ve önceki kararları ayır
+        const options = prevMessages.filter(msg => msg.id); // Seçenekler
+        const decisions = prevMessages.filter(msg => msg.country); // Kararlar
+        
+        return [...options, ...decisions, newMessage];
+      });
 
       // Sıradaki oyuncuya geç
       if (currentCountryIndex < playerCountries.length - 1) {
-        setCurrentCountryIndex((prev) => prev + 1);
+        setCurrentCountryIndex(prev => prev + 1);
       } else {
-        // Tüm oyuncular seçim yaptığında puanlama fazına geç
-        setCurrentCountryIndex(0); // Sıfırla
+        setCurrentCountryIndex(0);
         setIsScoringPhase(true);
         setScoreTurnIndex(0);
       }
+
     } catch (error) {
-      console.error("Seçenek uygulanamadı:", error.response?.data || error);
+      console.error("Hata:", error);
     }
   };
 
@@ -311,34 +319,13 @@ export default function App() {
       const response = await axios.get(
         `http://localhost:8080/api/game/problem/next/${gameId}`
       );
-      console.log("Backend'den gelen yanıt:", response.data);
-
-      // Backend'den gelen veri yapısı:
-      // {
-      //   problem: { id, description, options },
-      //   options: []
-      // }
 
       if (response.data?.problem?.description) {
-        // Problem açıklamasını ayarla
         setGlobalProblem(response.data.problem.description);
-        console.log(
-          "Yeni problem ayarlandı:",
-          response.data.problem.description
-        );
-
-        // Backend'den gelen seçenekleri kullan
-        if (Array.isArray(response.data.options)) {
-          setChatMessages(response.data.options);
-          console.log("Yeni seçenekler ayarlandı:", response.data.options);
-        } else {
-          console.error(
-            "Seçenekler dizi formatında değil:",
-            response.data.options
-          );
-        }
-      } else {
-        console.error("Problem verisi eksik:", response.data);
+        
+        // Burada messages'a önceki mesajları dahil etmemeliyiz
+        // Sadece yeni seçenekleri set etmeliyiz
+        setChatMessages(response.data.options);
       }
     } catch (error) {
       console.error("Problem alınamadı:", error);
@@ -425,7 +412,14 @@ export default function App() {
       );
 
       return (
-        <GameScreenLayout left={left} right={right}>
+        <GameScreenLayout 
+          left={left} 
+          right={right}
+          messages={chatMessages} // Sohbet mesajlarını gönder
+          currentProblem={globalProblem} // Mevcut problemi gönder
+          currentPlayer={isScoringPhase ? playerCountries[scoreTurnIndex] : playerCountries[currentCountryIndex]} // Aktif oyuncuyu gönder
+         isScoringPhase={isScoringPhase}
+       >
           <Scoreboard
             totalScores={scores}
             voteCounts={voteCounts}
