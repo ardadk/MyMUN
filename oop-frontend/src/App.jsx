@@ -1,26 +1,26 @@
 // src/App.js
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import StartScreen      from './components/StartScreen';
-import PlayerSelection  from './components/PlayerSelection';
-import CountrySelection from './components/CountrySelection';
-import GameSummary      from './components/GameSummary';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import StartScreen from "./components/StartScreen";
+import PlayerSelection from "./components/PlayerSelection";
+import CountrySelection from "./components/CountrySelection";
+import GameSummary from "./components/GameSummary";
 
-import GameScreenLayout from './components/GameScreenLayout';
-import LeftPanel        from './components/LeftPanel';
-import RightPanel       from './components/RightPanel/RightPanel';
-import CountryPage      from './components/CountryPage/CountryPage';
-import GameOver         from './components/GameOver';
-import Scoreboard from './components/RightPanel/Scoreboard';
+import GameScreenLayout from "./components/GameScreenLayout";
+import LeftPanel from "./components/LeftPanel";
+import RightPanel from "./components/RightPanel/RightPanel";
+import CountryPage from "./components/CountryPage/CountryPage";
+import GameOver from "./components/GameOver";
+import Scoreboard from "./components/RightPanel/Scoreboard";
 
-import { Player } from './models/Player';
-import { GameService } from './services/GameService';
+import { Player } from "./models/Player";
+import { GameService } from "./services/GameService";
 
 // Statik veri importları kaldırıldı - artık hepsi backend'den gelecek
 
-const countryCodes = ["A","B","C","D","E"];
+const countryCodes = ["A", "B", "C", "D", "E"];
 
-export default function App(){
+export default function App() {
   // --- seçim akışı state'leri ---
   const [gameStage, setGameStage] = useState("start");
   const [selectedPlayersCount, setSelectedPlayersCount] = useState(1);
@@ -42,7 +42,6 @@ export default function App(){
   const [viewCountry, setViewCountry] = useState(null);
   // --- oyun kimliği ---
 
-
   // Backend'den alınan skorları tutacak yeni state ekle
   const [gameId, setGameId] = useState(null); // Ayrı bir state olarak gameId
   const [gameInfo, setGameInfo] = useState({
@@ -53,64 +52,68 @@ export default function App(){
   const [players, setPlayers] = useState([]);
 
   // --- seçim akışı handler'ları ---
-  const handleStartClick = () => setGameStage("selectPlayers");
-  const handlePlayerCountChange = cnt => setSelectedPlayersCount(cnt);
+  const handleStartClick = () => {
+    setSelectedPlayersCount(5); // Set fixed 5 players
+    setPlayerCountries(Array(5).fill("")); // Create array for 5 countries
+    setCurrentPlayerIndex(0);
+    setGameStage("selectCountries"); // Go directly to country selection
+  };
+  const handlePlayerCountChange = (cnt) => setSelectedPlayersCount(cnt);
   const handlePlayerCountSubmit = () => {
     setPlayerCountries(Array(selectedPlayersCount).fill(""));
     setCurrentPlayerIndex(0);
     setGameStage("selectCountries");
   };
-  const handleCountryChange = country => {
+  const handleCountryChange = (country) => {
     const copy = [...playerCountries];
     copy[currentPlayerIndex] = country;
     setPlayerCountries(copy);
   };
   const handleNextPlayer = () => {
-    if (currentPlayerIndex < selectedPlayersCount-1)
-      setCurrentPlayerIndex(i=>i+1);
-    else
-      setGameStage("completed");
+    if (currentPlayerIndex < selectedPlayersCount - 1)
+      setCurrentPlayerIndex((i) => i + 1);
+    else setGameStage("completed");
   };
-  
+
   // Oyun başlama yanıtında artık politik kurallar ve başlangıç skorları backend'den gelecek
   const handleSubmitToBackend = async () => {
     try {
       setIsSubmitting(true);
-      
+
       // Düzeltilmiş veri yapısı
       const playerRequests = playerCountries.map((country, index) => ({
-        userId: (index + 1),
-        countryName: country
+        userId: index + 1,
+        countryName: country,
       }));
-      
+
       console.log("Gönderilen oyuncu verileri:", playerRequests);
       const response = await GameService.startGame(playerRequests);
       console.log("Alınan oyun verisi:", response);
-      
+
       const gameData = response.gameData || {};
-      
+
       setGameId(response.gameId);
       setGlobalProblem(gameData.problem?.description || "");
-      
+
       // Set initial options directly to chatMessages
       if (gameData.problem?.options) {
         setChatMessages(gameData.problem.options);
       }
-      
+
       // Oyuncuları kaydet
       if (gameData.players) {
         console.log("Backend'den alınan oyuncular:", gameData.players);
-        
+
         // Player modellerine dönüştür
         const playerModels = Player.listFromApi(gameData.players);
         setPlayers(playerModels);
-        
+
         // Ekonomi ve refah durumlarını ayarla
         const econData = {};
         const welfareData = {};
         const policyData = {};
-        
-        gameData.players.forEach(player => {
+
+        gameData.players.forEach((player) => {
           if (player.countryName) {
             econData[player.countryName] = player.economyStatus || 3;
             welfareData[player.countryName] = player.welfare || 3;
@@ -119,18 +122,18 @@ export default function App(){
             }
           }
         });
-        
+
         // GameInfo state'ini güncelle
-        setGameInfo(prevInfo => ({
+        setGameInfo((prevInfo) => ({
           ...prevInfo,
           econScores: econData,
-          welfareScores: welfareData
+          welfareScores: welfareData,
         }));
-        
+
         // Politikaları ayarla
         setCountryPolicies(policyData);
       }
-      
+
       setGameStage("playing");
     } catch (error) {
       console.error("Backend isteği başarısız:", error);
@@ -138,15 +141,15 @@ export default function App(){
       setIsSubmitting(false);
     }
   };
-  
+
   const updatePlayerRating = async (playerId, rating) => {
     try {
       await GameService.updatePlayerRating(gameId, playerId, rating);
-      
+
       // State'i güncelle
-      setScores(prevScores => ({
+      setScores((prevScores) => ({
         ...prevScores,
-        [playerId]: rating
+        [playerId]: rating,
       }));
     } catch (error) {
       console.error("Puanlama hatası:", error);
@@ -156,7 +159,7 @@ export default function App(){
   const handleRestart = () => {
     // Reset rounds counter
     setRoundsPlayed(0);
-    
+
     // tüm state'leri sıfırla
     setGameStage("start");
     setSelectedPlayersCount(1);
@@ -181,22 +184,22 @@ export default function App(){
       console.error("Geçersiz seçenek seçildi:", opt);
       return;
     }
-    
+
     console.log("Seçilen seçenek:", opt);
     try {
       const payload = {
         country: playerCountries[currentCountryIndex],
         welfareEffect: opt.welfareEffect || 0,
-        economyEffect: opt.economyEffect || 0
+        economyEffect: opt.economyEffect || 0,
       };
 
       console.log("Gönderilen veri:", payload);
-      
+
       const response = await axios.put(
-        `http://localhost:8080/api/game/info/${gameId}`, 
+        `http://localhost:8080/api/game/info/${gameId}`,
         payload
       );
-      
+
       console.log("Seçenek uygulandı:", response.data);
 
       // Güncellenmiş skorları almak için fetchGameInfo çağrısı ekleyin
@@ -204,53 +207,53 @@ export default function App(){
 
       // Sıradaki oyuncuya geç
       if (currentCountryIndex < playerCountries.length - 1) {
-        setCurrentCountryIndex(prev => prev + 1);
+        setCurrentCountryIndex((prev) => prev + 1);
       } else {
         // Tüm oyuncular seçim yaptığında puanlama fazına geç
         setCurrentCountryIndex(0); // Sıfırla
         setIsScoringPhase(true);
         setScoreTurnIndex(0);
       }
-
     } catch (error) {
       console.error("Seçenek uygulanamadı:", error.response?.data || error);
     }
-};
+  };
 
-const handleVoteSubmit = (votes) => {
-  const newVoteCounts = { ...voteCounts };
-  
-  // Debug the incoming votes
-  console.log("Incoming votes:", votes);
-  
-  // Her oyuncu için oy sayısını güncelle - burada vote değerini kullanmalıyız
-  Object.entries(votes).forEach(([countryName, vote]) => {
-    // vote değerini sayısal olarak ekle
-    newVoteCounts[countryName] = (newVoteCounts[countryName] || 0) + Number(vote);
-    console.log(`${countryName} için yeni oy: ${newVoteCounts[countryName]}`);
-  });
-  
-  setVoteCounts(newVoteCounts);
-  console.log("Güncellenen oy sayıları:", newVoteCounts);
+  const handleVoteSubmit = (votes) => {
+    const newVoteCounts = { ...voteCounts };
 
-  // Sıradaki oyuncuya geç
-  if (scoreTurnIndex < playerCountries.length - 1) {
-    setScoreTurnIndex(prev => prev + 1);
-  } else {
-    setIsScoringPhase(false);
-    setScoreTurnIndex(0);
-    
-    setRoundsPlayed(prev => {
-      const newRounds = prev + 1;
-      if (newRounds >= 3) {
-        setGameStage("gameOver");
-      } else {
-        fetchProblem();
-      }
-      return newRounds;
+    // Debug the incoming votes
+    console.log("Incoming votes:", votes);
+
+    // Her oyuncu için oy sayısını güncelle - burada vote değerini kullanmalıyız
+    Object.entries(votes).forEach(([countryName, vote]) => {
+      // vote değerini sayısal olarak ekle
+      newVoteCounts[countryName] =
+        (newVoteCounts[countryName] || 0) + Number(vote);
+      console.log(`${countryName} için yeni oy: ${newVoteCounts[countryName]}`);
     });
-  }
-};
+
+    setVoteCounts(newVoteCounts);
+    console.log("Güncellenen oy sayıları:", newVoteCounts);
+
+    // Sıradaki oyuncuya geç
+    if (scoreTurnIndex < playerCountries.length - 1) {
+      setScoreTurnIndex((prev) => prev + 1);
+    } else {
+      setIsScoringPhase(false);
+      setScoreTurnIndex(0);
+
+      setRoundsPlayed((prev) => {
+        const newRounds = prev + 1;
+        if (newRounds >= 3) {
+          setGameStage("gameOver");
+        } else {
+          fetchProblem();
+        }
+        return newRounds;
+      });
+    }
+  };
 
   // Oyun başladığında veya gameId değiştiğinde oyun bilgilerini çek
   useEffect(() => {
@@ -258,7 +261,6 @@ const handleVoteSubmit = (votes) => {
       console.log("GameID ve gameStage uygun, oyun bilgileri çekiliyor");
       fetchGameInfo();
     } else {
-     
     }
   }, [gameId, gameStage]);
 
@@ -268,12 +270,14 @@ const handleVoteSubmit = (votes) => {
       console.error("Oyun ID'si tanımlı değil, oyun bilgileri çekilemiyor");
       return; // gameId yoksa fonksiyondan erken çık
     }
-    
+
     try {
       console.log(`${gameId} ID'li oyun için bilgiler alınıyor...`);
-      const response = await axios.get(`http://localhost:8080/api/game/info/${gameId}`);
-      console.log("gameInfo içeriği alt satırda:")
-      console.log(response.data)
+      const response = await axios.get(
+        `http://localhost:8080/api/game/info/${gameId}`
+      );
+      console.log("gameInfo içeriği alt satırda:");
+      console.log(response.data);
       // Yanıtı gameInfo'ya set et
       setGameInfo(response.data);
       setCountryPolicies(response.data.policies || {});
@@ -288,11 +292,13 @@ const handleVoteSubmit = (votes) => {
       console.error("fetchGameInfoDirectly: Geçerli bir ID verilmedi");
       return;
     }
-    
+
     try {
       console.log(`${id} ID'li oyun için bilgiler alınıyor...`);
-      const response = await axios.get(`http://localhost:8080/api/game/info/${id}`);
-      
+      const response = await axios.get(
+        `http://localhost:8080/api/game/info/${id}`
+      );
+
       setGameInfo(response.data);
       setCountryPolicies(response.data.policies || {});
     } catch (error) {
@@ -302,7 +308,9 @@ const handleVoteSubmit = (votes) => {
 
   const fetchProblem = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/game/problem/next/${gameId}`);
+      const response = await axios.get(
+        `http://localhost:8080/api/game/problem/next/${gameId}`
+      );
       console.log("Backend'den gelen yanıt:", response.data);
 
       // Backend'den gelen veri yapısı:
@@ -310,18 +318,24 @@ const handleVoteSubmit = (votes) => {
       //   problem: { id, description, options },
       //   options: []
       // }
-      
+
       if (response.data?.problem?.description) {
         // Problem açıklamasını ayarla
         setGlobalProblem(response.data.problem.description);
-        console.log("Yeni problem ayarlandı:", response.data.problem.description);
-        
+        console.log(
+          "Yeni problem ayarlandı:",
+          response.data.problem.description
+        );
+
         // Backend'den gelen seçenekleri kullan
         if (Array.isArray(response.data.options)) {
           setChatMessages(response.data.options);
           console.log("Yeni seçenekler ayarlandı:", response.data.options);
         } else {
-          console.error("Seçenekler dizi formatında değil:", response.data.options);
+          console.error(
+            "Seçenekler dizi formatında değil:",
+            response.data.options
+          );
         }
       } else {
         console.error("Problem verisi eksik:", response.data);
@@ -332,18 +346,9 @@ const handleVoteSubmit = (votes) => {
   };
 
   // --- render
-  switch(gameStage) {
+  switch (gameStage) {
     case "start":
-      return <StartScreen onStart={handleStartClick}/>;
-
-    case "selectPlayers":
-      return (
-        <PlayerSelection
-          selectedCount={selectedPlayersCount}
-          onCountChange={handlePlayerCountChange}
-          onContinue={handlePlayerCountSubmit}
-        />
-      );
+      return <StartScreen onStart={handleStartClick} />;
 
     case "selectCountries":
       return (
@@ -374,7 +379,9 @@ const handleVoteSubmit = (votes) => {
             countryCode={viewCountry}
             econ={gameInfo.econScores[viewCountry]}
             welfare={gameInfo.welfareScores[viewCountry]}
-            policy={countryPolicies[viewCountry] || gameInfo.policies[viewCountry]}
+            policy={
+              countryPolicies[viewCountry] || gameInfo.policies[viewCountry]
+            }
             problem={globalProblem}
             totalScores={scores}
             voteCounts={voteCounts}
@@ -387,38 +394,42 @@ const handleVoteSubmit = (votes) => {
       const left = (
         <LeftPanel
           playerCountries={playerCountries}
-          onCountrySelect={c => setViewCountry(c)}
+          onCountrySelect={(c) => setViewCountry(c)}
           econScores={gameInfo.econScores}
           welfareScores={gameInfo.welfareScores}
           countryPolicies={countryPolicies}
+          gameInfo={gameInfo}
+          voteCounts={voteCounts}
+          players={players}
         />
       );
-      
+
       const right = (
         <RightPanel
           problem={globalProblem}
-          options={chatMessages} 
+          options={chatMessages}
           onSelectOption={handleOptionSelect}
           isScoringPhase={isScoringPhase}
-          voter={isScoringPhase 
-            ? playerCountries[scoreTurnIndex] // Puanlama fazındaki ülke
-            : playerCountries[currentCountryIndex] // Seçim fazındaki ülke
+          voter={
+            isScoringPhase
+              ? playerCountries[scoreTurnIndex] // Puanlama fazındaki ülke
+              : playerCountries[currentCountryIndex] // Seçim fazındaki ülke
           }
           onVote={handleVoteSubmit}
           totalScores={scores}
           voteCounts={voteCounts}
           chatMessages={chatMessages}
-          players={players}      
-          gameInfo={gameInfo}    
+          players={players}
+          gameInfo={gameInfo}
         />
       );
 
       return (
         <GameScreenLayout left={left} right={right}>
-          <Scoreboard 
-            totalScores={scores} 
+          <Scoreboard
+            totalScores={scores}
             voteCounts={voteCounts}
-            players={players} 
+            players={players}
             gameInfo={gameInfo}
           />
         </GameScreenLayout>
@@ -426,12 +437,12 @@ const handleVoteSubmit = (votes) => {
 
     case "gameOver":
       return (
-        <GameOver 
+        <GameOver
           onRestart={handleRestart}
           totalScores={scores}
           voteCounts={voteCounts}
           players={players}
-          gameInfo={gameInfo} 
+          gameInfo={gameInfo}
         />
       );
 

@@ -1,10 +1,50 @@
 /* src/components/GameScreenLayout.css */
-.game-screen { padding: 1rem; }
-.game-layout { display: flex; height: 100%; }
-.game-left-panel,
-.game-right-panel {
-  flex: 1;
+.game-screen {
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+ 
+  padding: 1rem;
+  
+}
+
+.game-layout {
+  display: flex;
+  min-height: 100vh; /* Increased from 10vh */
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+.game-left-panel {
+  margin-right: 200px;
+  flex: 0 0 300px;
+  height: 100%;
   padding: 0.5rem;
   overflow-y: auto;
+  border-right: 2px solid #ccc;
 }
-.game-left-panel { border-right: 2px solid #ccc; }
+
+.game-right-panel {
+  flex: 1;
+  min-width: 0;
+  height: 100vh; /* Added fixed height */
+  max-height: calc(100vh - 40px); /* Account for padding */
+  overflow-y: auto;
+}
+
+/* Add styles for right panel content and cards */
+.right-panel-content {
+  margin-top: 10px;
+  height: auto;
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.current-player {
+  height: 70px;
+}
+
+
+

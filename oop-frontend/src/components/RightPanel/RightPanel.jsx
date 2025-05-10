@@ -2,7 +2,6 @@ import React from 'react';
 import './RightPanel.css';
 import ProblemCard from '../Cards/ProblemCard';
 import OptionButtons from './OptionButtons';
-import Scoreboard from './Scoreboard';
 import VoteForm from './VoteForm';
 
 const RightPanel = ({ 
@@ -12,11 +11,6 @@ const RightPanel = ({
   isScoringPhase, 
   voter,
   onVote, 
-  totalScores, 
-  voteCounts, 
-  chatMessages,
-  players,
-  gameInfo
 }) => {
   if (isScoringPhase) {
     return (
@@ -28,7 +22,6 @@ const RightPanel = ({
 
   return (
     <div className="right-panel">
-      {/* Sıradaki ülke gösterimi */}
       <div className="current-player">
         <p className="current-speaker">
           Sıradaki konuşmacı: <strong>{voter || "..."}</strong>
@@ -37,12 +30,9 @@ const RightPanel = ({
 
       <div className="right-panel-content">
         <ProblemCard text={problem} />
-
         <div className="options-card">
           <OptionButtons options={options} onSelect={onSelectOption} />
         </div>
-
-       
       </div>
     </div>
   );
