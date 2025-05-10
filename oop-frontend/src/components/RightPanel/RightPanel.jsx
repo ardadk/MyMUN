@@ -10,7 +10,9 @@ const RightPanel = ({
   onVote, 
   totalScores, 
   voteCounts, 
-  chatMessages 
+  chatMessages,
+  players,
+  gameInfo
 }) => {
   if (isScoringPhase) {
     return (
@@ -30,7 +32,7 @@ const RightPanel = ({
       {/* Only one scoreboard - the floating one */}
       <div className="floating-scoreboard">
         <h3>GÜNCEL ORTALAMA PUANLAR</h3>
-        <Scoreboard totalScores={totalScores} voteCounts={voteCounts} />
+        <Scoreboard totalScores={totalScores} voteCounts={voteCounts} players={players} gameInfo={gameInfo} />
       </div>
     </div>
   );

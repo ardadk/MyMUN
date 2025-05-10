@@ -218,6 +218,9 @@ export default function App(){
       console.log("Gönderilen veri:", payload);
       const response = await axios.put(`http://localhost:8080/api/game/info/${gameId}`, payload);
       console.log("Seçenek uygulandı:", response.data);
+      
+      // Add this line to fetch updated game info
+      await fetchGameInfo();
     } catch (error) {
       console.error("Seçenek uygulanamadı:", error.response?.data || error);
     } finally {
@@ -260,6 +263,9 @@ export default function App(){
         return;
       }
       
+      // Add this line to fetch updated game info
+      await fetchGameInfo();
+      
       // Yeni tur için problem al
       console.log("Tur tamamlandı, yeni problem alınıyor...");
       await fetchProblem();
@@ -280,7 +286,7 @@ export default function App(){
   const fetchGameInfo = async () => {
     if (!gameId) {
       console.error("Oyun ID'si tanımlı değil, oyun bilgileri çekilemiyor");
-      return; // gameId yoksa fonksiyondan erken çık
+      return;
     }
     
     try {
@@ -288,8 +294,28 @@ export default function App(){
       const response = await axios.get(`http://localhost:8080/api/game/info/${gameId}`);
       console.log("gameInfo içeriği alt satırda:")
       console.log(response.data)
+      
+      // Eğer econScores yoksa veya boş ise, policies verisinden oluştur
+      const econScores = response.data.econScores || {};
+      const welfareScores = response.data.welfareScores || {};
+      
+      // Eksik ülkeler için varsayılan değerler
+      playerCountries.forEach(country => {
+        if (country && !econScores[country]) {
+          econScores[country] = response.data.economyStatus?.[country] || 50;
+        }
+        if (country && !welfareScores[country]) {
+          welfareScores[country] = response.data.welfare?.[country] || 50;
+        }
+      });
+      
       // Yanıtı gameInfo'ya set et
-      setGameInfo(response.data);
+      setGameInfo({
+        ...response.data,
+        econScores: econScores,
+        welfareScores: welfareScores
+      });
+      
       setCountryPolicies(response.data.policies || {});
     } catch (error) {
       console.error("Oyun bilgileri alınırken hata oluştu:", error);
@@ -307,7 +333,17 @@ export default function App(){
       console.log(`${id} ID'li oyun için bilgiler alınıyor...`);
       const response = await axios.get(`http://localhost:8080/api/game/info/${id}`);
       
-      setGameInfo(response.data);
+      // Eğer econScores yoksa veya boş ise, oluştur
+      const econScores = response.data.econScores || {};
+      const welfareScores = response.data.welfareScores || {};
+      
+      // Yanıtı gameInfo'ya set et
+      setGameInfo({
+        ...response.data,
+        econScores: econScores,
+        welfareScores: welfareScores
+      });
+      
       setCountryPolicies(response.data.policies || {});
     } catch (error) {
       console.error("Oyun bilgileri alınırken hata oluştu:", error);
@@ -408,17 +444,29 @@ export default function App(){
       );
       
       const right = (
-        <RightPanel
-          isScoringPhase={isScoringPhase}
-          voter={isScoringPhase 
-            ? playerCountries[scoreTurnIndex]
-            : playerCountries[currentCountryIndex]
-          }
-          onVote={handleVoteSubmit}
-          totalScores={scores}
-          voteCounts={voteCounts}
-          chatMessages={chatMessages}
-        />
+        <div>
+          <RightPanel
+            isScoringPhase={isScoringPhase}
+            voter={isScoringPhase 
+              ? playerCountries[scoreTurnIndex]
+              : playerCountries[currentCountryIndex]
+            }
+            onVote={handleVoteSubmit}
+            totalScores={scores}
+            voteCounts={voteCounts}
+            chatMessages={chatMessages}
+            players={players}
+            gameInfo={gameInfo}
+          />
+          {!isScoringPhase && (
+            <Scoreboard 
+              totalScores={scores} 
+              voteCounts={voteCounts}
+              players={players} 
+              gameInfo={gameInfo}
+            />
+          )}
+        </div>
       );
 
       return (
