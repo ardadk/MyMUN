@@ -33,10 +33,20 @@ export default function CountryPage({
       </div>
 
       <div className="map-and-score-container">
+        
         <div className="map-wrapper">
           <WorldMap selectedCountry={countryCode} onCountrySelect={() => {}} />
         </div>
-       
+
+        
+        <div className="scoreboard-wrapper">
+          <Scoreboard
+            totalScores={totalScores}
+            voteCounts={voteCounts}
+            players={players}
+            gameInfo={gameInfo}
+          />
+        </div>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import './Css/GameOver.css';
 import Scoreboard from './RightPanel/Scoreboard';
 
 export default function GameOver({ onRestart, totalScores, voteCounts, players, gameInfo}) {
-  // Her ülke için final puanı hesapla
+  
   const finalScores = players.map(player => {
     const economy = (gameInfo?.econScores?.[player.countryName] || player.economyScore || 0) / 10;
     const welfare = (gameInfo?.welfareScores?.[player.countryName] || player.welfareScore || 0) / 10;
@@ -21,7 +21,7 @@ export default function GameOver({ onRestart, totalScores, voteCounts, players, 
     };
   });
 
-  // Puanlara göre sırala ve kazananı bul
+  
   const sortedScores = [...finalScores].sort((a, b) => b.score - a.score);
   const winner = sortedScores[0];
 

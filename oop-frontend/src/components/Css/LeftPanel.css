@@ -9,11 +9,11 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 140px; /* ekran görüntüsündeki genişlik */
+  width: 140px; 
 }
 
 .country-button {
-  /* görseldeki kutucuklardaki mavi-mor geçişli degrade */
+  
   background: linear-gradient(90deg, #5a67d8 0%,  #663399 100%);
   color: #fff;
   border: none;

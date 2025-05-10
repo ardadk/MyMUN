@@ -1,8 +1,8 @@
 .game-screen-layout {
   display: flex;
-  justify-content: flex-start; /* Sol taraftan başla */
+  justify-content: flex-start; 
   gap: 20px;
   padding: 20px;
-  min-width: 1440px; /* Minimum toplam genişlik */
+  min-width: 1440px; 
   margin: 0 auto;
 }

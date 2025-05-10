@@ -1,5 +1,3 @@
-/* src/components/css/Card.css */
-
 .card {
   display: flex;
   flex-direction: column;
@@ -9,7 +7,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   color: #fff;
   flex: 1;
-  min-width: 0; /* flex item overflow fix */
+  min-width: 0; 
 }
 
 .card p {
@@ -26,7 +24,6 @@
   line-height: 1.2;
 }
 
-/* Gradient arkaplan renkleri */
 .purple {
   background: linear-gradient(90deg, #5a67d8 0%,  #663399 100%);
 }

@@ -1,4 +1,4 @@
-/* src/components/GameScreenLayout.css */
+
 .game-screen {
   width: 100%;
   min-height: 100vh;
@@ -10,7 +10,7 @@
 
 .game-layout {
   display: flex;
-  min-height: 100vh; /* Increased from 10vh */
+  min-height: 100vh; 
   gap: 20px;
   box-sizing: border-box;
 }
@@ -27,12 +27,12 @@
 .game-right-panel {
   flex: 1;
   min-width: 0;
-  height: 100vh; /* Added fixed height */
-  max-height: calc(100vh - 40px); /* Account for padding */
+  height: 100vh; 
+  max-height: calc(100vh - 40px); 
   overflow-y: auto;
 }
 
-/* Add styles for right panel content and cards */
+
 .right-panel-content {
   margin-top: 10px;
   height: auto;

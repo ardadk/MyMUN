@@ -8,7 +8,7 @@ export default function LeftPanel({
   voteCounts,
   players 
 }) {
-  // Calculate current scores using GameOver logic
+  
   const currentScores = players?.map(player => {
     const economy = (gameInfo?.econScores?.[player.countryName] || player.economyScore || 0) / 10;
     const welfare = (gameInfo?.welfareScores?.[player.countryName] || player.welfareScore || 0) / 10;

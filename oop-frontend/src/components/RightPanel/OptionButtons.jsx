@@ -1,4 +1,4 @@
-// File: src/components/OptionButtons.jsx
+
 import './OptionButtons.css';
 
 export default function OptionButtons({ options, onSelect }) {

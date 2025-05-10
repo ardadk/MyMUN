@@ -1,4 +1,3 @@
-// src/components/WorldMap.jsx
 import React from 'react';
 import './WorldMap.css';
 
@@ -11,13 +10,8 @@ const positions = [
   { top: '47%', left: '72%' }
 ];
 
-/**
- * selectedCountry: (string|null)—
- *    null ise seçim ekranındayız; tüm country-code haritalarını göster.
- *    bir kod (ör. "A") ise o ülkenin haritasını göster.
- */
 export default function WorldMap({ selectedCountry, onCountrySelect }) {
-  // Eğer bir ülke seçilmişse onun map’ini, değilse seçim ekranı modunu aç
+
   if (selectedCountry) {
     return (
       <div className="map-container">
@@ -30,7 +24,6 @@ export default function WorldMap({ selectedCountry, onCountrySelect }) {
     );
   }
 
-  // Seçim modu: tüm haritaları küçük tile’lar halinde göster
   return (
     <div className="map-container selection-mode">
       {countries.map((code, idx) => (

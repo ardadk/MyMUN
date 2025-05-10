@@ -6,7 +6,7 @@ export class Player {
         this.policy = data.policy || '';
     }
 
-    // Getters ve setters
+   
     getUserId() {
         return this.userId;
     }
@@ -39,23 +39,20 @@ export class Player {
         this.policy = policy;
     }
 
-    // API'den gelen veriyi Player modeline dönüştürür
     static fromApi(apiData) {
         return new Player(apiData);
     }
 
-    // Birden fazla oyuncuyu dönüştürmek için yardımcı metod
     static listFromApi(playerDataArray) {
-        // Add null check before mapping
         if (!playerDataArray || !Array.isArray(playerDataArray)) {
             console.error('Expected player array but received:', playerDataArray);
-            return []; // Return empty array instead of failing
+            return []; 
         }
         
         return playerDataArray.map(playerData => Player.fromApi(playerData));
     }
 
-    // Backend'e gönderilecek formata dönüştürür
+    
     toApiFormat() {
         return {
             userId: this.userId,

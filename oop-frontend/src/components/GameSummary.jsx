@@ -1,4 +1,4 @@
-// src/components/GameSummary.jsx
+
 import React from 'react';
 import './Css/GameSummary.css';
 

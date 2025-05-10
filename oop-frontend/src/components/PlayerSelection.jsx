@@ -1,4 +1,3 @@
-// src/components/PlayerSelection.jsx
 import './Css/PlayerSelection.css';
 
 export default function PlayerSelection({ selectedCount, onCountChange, onContinue }) {

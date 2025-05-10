@@ -1,20 +1,16 @@
-/* src/components/css/RightPanel.css */
-/* .game-right-panel {
-    width: 500px;
-} */
 
 .right-panel {
   background: #ffffff;
   border-radius: 12px;
  
   height: auto;
-  max-height: calc(100vh - 60px); /* Account for container padding */
+  max-height: calc(100vh - 60px); 
   display: flex;
   flex-direction: column;
   gap: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-left: 20px; /* Sol panel ile arasında boşluk */
-  overflow: hidden; /* Tüm yönlerde scroll'u engelle */
+  margin-left: 20px; 
+  overflow: hidden; 
   box-sizing: border-box;
 }
 
@@ -25,10 +21,10 @@
   gap: 20px;
   overflow-y: auto;
   padding: 1.5rem;
-  width: 100%;    /* Parent'a göre */
+  width: 100%;    
   background: linear-gradient(135deg, #e0e7ff 0%, #f0fff4 100%);
   box-sizing: border-box;
-  max-height: calc(100vh - 200px); /* Give space for header and padding */
+  max-height: calc(100vh - 200px); 
 }
 
 .right-panel-content::-webkit-scrollbar {
@@ -49,17 +45,17 @@
   background: #a8a8a8;
 }
 
-/* Bu ikisi tam genişlikte (tek satır) */
+
 .current-speaker,
-.options-card + .scoreboard /*(istersen sadece .current-speaker için aşağıdaki de yeter)*/ {
+.options-card + .scoreboard  {
   width: 100%;
 }
 
-/* Seçenek kartı ve skor tablosu yan yana */
+
 .options-card,
 .scoreboard {
-  flex: 1 1 calc(50% - 1rem);    /* iki sütuna böl, arada gap için -1rem */
-  min-width: 300px;              /* dar ekranlarda alt alta kaymak için opsiyonel */
+  flex: 1 1 calc(50% - 1rem);    
+  min-width: 300px;              
 }
 
 .current-player {
@@ -122,7 +118,7 @@
   overflow: hidden;
 }
 
-/* Hover efektleri */
+
 .options-card:hover,
 .current-player:hover,
 .problem-card:hover {
@@ -130,7 +126,7 @@
   transition: transform 0.2s ease;
 }
 
-/* Responsive tasarım için medya sorguları */
+
 @media (max-width: 768px) {
   .right-panel {
     padding: 15px;
@@ -146,7 +142,7 @@
   }
 }
 
-/* Animasyonlar */
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -156,7 +152,7 @@
   animation: fadeIn 0.3s ease-out forwards;
 }
 
-/* Problem kartı ve diğer içerik kartları için */
+
 .problem-card,
 .current-player,
 .options-card,
@@ -167,16 +163,16 @@
   overflow: hidden;
 }
 
-/* Update option buttons container for better fit */
+
 .option-buttons {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Two columns */
-  gap: 10px; /* Gap'i azalttık */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px; 
   width: 100%;
   overflow: hidden;
 }
 
-/* Make sure option buttons have enough width */
+
 .option-button {
   width: 100%;
   padding: 12px;
@@ -187,7 +183,7 @@
   text-overflow: ellipsis;
 }
 
-/* Add responsive breakpoint for smaller screens */
+
 @media (max-width: 900px) {
   .right-panel {
     width: 700px;
@@ -195,6 +191,6 @@
   }
   
   .option-buttons {
-    grid-template-columns: 1fr; /* Single column on smaller screens */
+    grid-template-columns: 1fr;
   }
 }

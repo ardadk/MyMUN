@@ -1,37 +1,47 @@
+
+import React from 'react';
 import './Scoreboard.css';
-import { useEffect } from 'react';
 
-export default function Scoreboard({ totalScores = {}, voteCounts = {}, players = [], gameInfo = {} }) {
-  useEffect(() => {
-    console.log("Scoreboard players:", players);
-    console.log("Scoreboard gameInfo:", gameInfo);
-  }, [players, gameInfo]);
+export default function Scoreboard({ gameInfo, voteCounts }) {
+  const { econScores = {}, welfareScores = {} } = gameInfo || {};
 
-  if (!players || players.length === 0) {
-    return <div>Oyuncu verisi yükleniyor...</div>;
-  }
+  
+  const entries = Object.keys(econScores).map((country) => {
+    const eko = Number(econScores[country] ?? 0);
+    const ref = Number(welfareScores[country] ?? 0);
+    const oy  = Number(voteCounts?.[country] ?? 0);
+    const top = eko + ref + oy;
+    return { country, eko, ref, oy, top };
+  });
+
+  
+  entries.sort((a, b) => b.top - a.top);
 
   return (
-    <div className="scoreboard">
-      <div className="scores-grid">
-        {players.map(player => (
-          <div key={player.countryName} className="score-card">
-            <h4>{player.countryName}</h4>
-            <p>
-              <span> Ekonomi:</span> 
-              <span>{gameInfo?.econScores?.[player.countryName] || player.economyScore || 0}</span>
-            </p>
-            <p>
-              <span> Refah:</span> 
-              <span>{gameInfo?.welfareScores?.[player.countryName] || player.welfareScore || 0}</span>
-            </p>
-            <p>
-              <span> Oy:</span> 
-              <span>{voteCounts[player.countryName] || 0}</span>
-            </p>
-          </div>
-        ))}
-      </div>
+    <div className="scoreboard-card">
+      <h3>Mevcut Puanlar</h3>
+      <table className="scoreboard-table">
+        <thead>
+          <tr>
+            <th>Ülke</th>
+            <th>Eko.</th>
+            <th>Ref.</th>
+            <th>Oy</th>
+            <th>Top.</th>
+          </tr>
+        </thead>
+        <tbody>
+          {entries.map(({ country, eko, ref, oy, top }) => (
+            <tr key={country}>
+              <td>{country}</td>
+              <td>{eko.toFixed(1)}</td>
+              <td>{ref.toFixed(1)}</td>
+              <td>{oy.toFixed(1)}</td>
+              <td className="total-score">{top.toFixed(1)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

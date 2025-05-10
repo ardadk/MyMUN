@@ -6,55 +6,6 @@
   margin: 15px;
 }
 
-.scoreboard ul {
-  list-style: none;
-  padding: 0;
-}
-
-.scoreboard li {
-  padding: 5px 10px;
-  margin: 5px 0;
-  border-radius: 4px;
-  color: #fff;
-  font-weight: bold;
-}
-
-/* A–E tüm puan satırları için aynı gradient’i uyguluyoruz */
-.scoreboard li.a,
-.scoreboard li.b,
-.scoreboard li.c,
-.scoreboard li.d,
-.scoreboard li.e {
-  background: linear-gradient(135deg, #4b7bec 0%,  #663399 100%);
-}
-
-/* Scoreboard.css dosyasına eklenecek */
-.score-breakdown {
-  display: flex;
-  align-items: center;
-}
-
-.total-score {
-  font-weight: bold;
-  font-size: 1.1em;
-  margin-right: 8px;
-}
-
-.score-details {
-  display: flex;
-  font-size: 0.8em;
-  color: #888;
-}
-
-.score-details div {
-  margin-right: 8px;
-}
-
-.country-name {
-  font-weight: bold;
-  margin-right: 5px;
-}
-
 .scores-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -83,17 +34,84 @@
   border-bottom: 2px solid #e9ecef;
 }
 
-.score-card p {
-  color: #495057;
-  margin: 8px 0;
-  font-size: 1em;
+.score-breakdown {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
 }
 
-.score-card p::before {
+.total-score {
   font-weight: bold;
-  margin-right: 10px;
+  font-size: 1.1em;
+  margin-right: 8px;
+}
+
+.score-details {
+  display: flex;
+  font-size: 0.8em;
+  color: #888;
+}
+
+.score-details div {
+  margin-right: 8px;
 }
 
 
+.score-card.a,
+.score-card.b,
+.score-card.c,
+.score-card.d,
+.score-card.e {
+  background: linear-gradient(135deg, #4b7bec 0%, #663399 100%);
+  color: #fff;
+}
+
+
+.scoreboard-card {
+  background: linear-gradient(180deg, #e0e7ff 0%, #f0fff4 100%);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 15px 0;             
+}
+
+.scoreboard-card h3 {
+  margin: 0 0 16px;
+  font-size: 1.5rem;
+  color: #2c3e50;
+}
+
+.scoreboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;        
+}
+
+.scoreboard-table th,
+.scoreboard-table td {
+  padding: 8px 12px;
+}
+
+.scoreboard-table thead th {
+  text-align: left;
+  font-weight: 600;
+  color: #555;
+  border-bottom: 2px solid #eee;
+}
+
+.scoreboard-table tbody td {
+  text-align: right;          
+  color: #333;
+}
+
+.scoreboard-table tbody td:first-child {
+  text-align: left;          
+}
+
+.scoreboard-table tbody tr + tr td {
+  border-top: 1px solid #f5f5f5;
+}
+
+.scoreboard-table .total-score {
+  color: #1976d2;
+  font-weight: 700;
+}
