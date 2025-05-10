@@ -54,13 +54,14 @@ export default function App(){
   const [problemOptions, setProblemOptions] = useState([]);
 
   // --- seçim akışı handler'ları ---
-  const handleStartClick = () => setGameStage("selectPlayers");
-  const handlePlayerCountChange = cnt => setSelectedPlayersCount(cnt);
-  const handlePlayerCountSubmit = () => {
-    setPlayerCountries(Array(selectedPlayersCount).fill(""));
+  const handleStartClick = () => {
+    // Oyuncu sayısı seçimini atla, direkt 5 oyuncu ile başla
+    setSelectedPlayersCount(5);
+    setPlayerCountries(Array(5).fill(""));
     setCurrentPlayerIndex(0);
     setGameStage("selectCountries");
   };
+
   const handleCountryChange = country => {
     const copy = [...playerCountries];
     copy[currentPlayerIndex] = country;
@@ -352,15 +353,6 @@ export default function App(){
   switch(gameStage) {
     case "start":
       return <StartScreen onStart={handleStartClick}/>;
-
-    case "selectPlayers":
-      return (
-        <PlayerSelection
-          selectedCount={selectedPlayersCount}
-          onCountChange={handlePlayerCountChange}
-          onContinue={handlePlayerCountSubmit}
-        />
-      );
 
     case "selectCountries":
       return (
