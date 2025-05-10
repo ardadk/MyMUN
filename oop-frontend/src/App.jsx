@@ -11,13 +11,10 @@ import RightPanel from "./components/RightPanel/RightPanel";
 import CountryPage from "./components/CountryPage/CountryPage";
 import GameOver from "./components/GameOver";
 import Scoreboard from "./components/RightPanel/Scoreboard";
-
+import ChatBox from "./components/ChatBox";
 import { Player } from "./models/Player";
 import { GameService } from "./services/GameService";
 
-
-
-const countryCodes = ["A", "B", "C", "D", "E"];
 
 export default function App() {
  
@@ -49,6 +46,7 @@ export default function App() {
     policies: {},
   });
   const [players, setPlayers] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState([]);
 
   
   const handleStartClick = () => {
@@ -162,6 +160,11 @@ export default function App() {
 
   const handleOptionSelect = async (opt) => {
     if (!opt) return;
+
+    setSelectedOptions(prev => [...prev, {
+      voter: playerCountries[currentCountryIndex],
+      text: opt.text
+    }]);
 
     const payload = {
       country: playerCountries[currentCountryIndex],
@@ -300,38 +303,47 @@ export default function App() {
           gameInfo={gameInfo}
           voteCounts={voteCounts}
           players={players}
+          options={chatMessages}
+          selectedOptions={selectedOptions}
         />
       );
 
       const right = (
-        <RightPanel
-          problem={globalProblem}
-          options={chatMessages}
-          onSelectOption={handleOptionSelect}
-          isScoringPhase={isScoringPhase}
-          voter={
-            isScoringPhase
-              ? playerCountries[scoreTurnIndex]
-              : playerCountries[currentCountryIndex]
-          }
-          onVote={handleVoteSubmit}
-          totalScores={scores}
-          voteCounts={voteCounts}
-          chatMessages={chatMessages}
-          players={players}
-          gameInfo={gameInfo}
-        />
+        <>
+          <RightPanel
+            problem={globalProblem}
+            options={chatMessages}
+            onSelectOption={handleOptionSelect}
+            isScoringPhase={isScoringPhase}
+            voter={
+              isScoringPhase
+                ? playerCountries[scoreTurnIndex]
+                : playerCountries[currentCountryIndex]
+            }
+            onVote={handleVoteSubmit}
+            gameInfo={gameInfo}
+            players={players}
+          />
+        </>
+      );
+
+      const center = (
+        <div className="game-center-content">
+          <h2>Konsey Toplantısı</h2>
+          <ChatBox 
+            options={chatMessages} 
+            voter={playerCountries[currentCountryIndex]}
+            selectedOptions={selectedOptions}
+          />
+        </div>
       );
 
       return (
-        <GameScreenLayout left={left} right={right}>
-          <Scoreboard
-            totalScores={scores}
-            voteCounts={voteCounts}
-            players={players}
-            gameInfo={gameInfo}
-          />
-        </GameScreenLayout>
+        <GameScreenLayout 
+          left={left} 
+          center={center} // Yeni center prop'u
+          right={right}
+        />
       );
 
     case "gameOver":

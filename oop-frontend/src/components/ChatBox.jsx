@@ -2,7 +2,13 @@
 import React from 'react';
 import './Css/ChatBox.css';
 
-const ChatBox = ({ messages = [] }) => {
+const ChatBox = ({ options = [], voter = "", selectedOptions = [] }) => {
+  // Seçilen seçenekleri formatla
+  const messages = selectedOptions.map(option => ({
+    country: option.voter || "Sistem",
+    text: option.text || (typeof option === "string" ? option : "Seçenek seçildi")
+  }));
+
   return (
     <div className="chatbox">
       <div className="chatbox-title">KONSEY</div>

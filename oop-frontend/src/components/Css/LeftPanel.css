@@ -9,12 +9,13 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 140px; 
+  width: 100%; 
+  max-width: 300px;
 }
 
 .country-button {
-  
-  background: linear-gradient(90deg, #5a67d8 0%,  #663399 100%);
+  width: 100%;
+  background: linear-gradient(90deg, #5a67d8 0%, #663399 100%);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -23,6 +24,7 @@
   cursor: pointer;
   transition: transform .1s;
 }
+
 
 .country-button:hover {
   transform: scale(1.05);
@@ -47,6 +49,7 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
+  color: #0a1c8e;
 }
 
 .score-table th,

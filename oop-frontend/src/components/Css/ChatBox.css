@@ -1,14 +1,15 @@
-
 .chatbox {
   background-color: #fff;
   border-radius: 10px;
   padding: 12px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
   
-  display: block;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   box-sizing: border-box;
-  margin-bottom: 1rem; 
+  margin-bottom: 1rem;
+  height: calc(100vh - 120px); /* Daha yüksek bir değer */
 }
 
 .chatbox-title {
@@ -21,10 +22,11 @@
 }
 
 .chatbox-messages {
-  max-height: 250px;
+  max-height: calc(100vh - 180px); /* Çok daha yüksek */
   overflow-y: auto;
-  
-  display: block;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
   padding-right: 4px; 
 }
 

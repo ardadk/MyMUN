@@ -1,45 +1,89 @@
-
+/* Ana kapsayıcı */
 .game-screen {
-  width: 100%;
-  min-height: 100vh;
-  overflow: hidden;
- 
-  padding: 1rem;
-  
-}
-
-.game-layout {
-  display: flex;
-  min-height: 100vh; 
-  gap: 20px;
-  box-sizing: border-box;
-}
-
-.game-left-panel {
-  margin-right: 200px;
-  flex: 0 0 300px;
-  height: 100%;
-  padding: 0.5rem;
-  overflow-y: auto;
-  border-right: 2px solid #ccc;
-}
-
-.game-right-panel {
-  flex: 1;
-  min-width: 0;
-  height: 100vh; 
-  max-height: calc(100vh - 40px); 
-  overflow-y: auto;
-}
-
-
-.right-panel-content {
-  margin-top: 10px;
-  height: auto;
-  min-height: 90vh;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+/* Üç sütunlu ana grid */
+.game-layout {
+  display: grid;
+  grid-template-columns: minmax(250px, 1fr) 2fr minmax(250px, 1fr); /* üç sütun: sol, orta, sağ */
+  grid-gap: 16px;
+  height: calc(100vh - 32px); /* sayfa yüksekliği - padding */
+  padding: 16px;
+}
+
+/* Tüm paneller için ortak stiller */
+.game-left-panel,
+.game-center-panel,
+.game-right-panel {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sol panel özellikleri */
+.game-left-panel {
+  border-right: none; /* border-right kaldırıldı, zaten grid gap var */
+}
+
+/* Orta panel özellikleri */
+.game-center-panel {
+  background-color: rgba(250, 250, 250, 0.95);
+  border: 1px solid #e0e0e0;
+}
+
+/* Sağ panel özellikleri */
+.game-right-panel {
+  background-color: rgba(253, 253, 253, 0.95);
+}
+
+/* İçerik bölümü için stiller */
+.right-panel-content,
+.left-panel-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Responsive düzen için medya sorguları */
+@media (max-width: 1200px) {
+  .game-layout {
+    grid-template-columns: 1fr 2fr; /* Ekran küçüldüğünde sağ paneli kaldır */
+  }
+  
+  .game-right-panel {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .game-layout {
+    grid-template-columns: 1fr; /* Mobilde tek sütun */
+  }
+  
+  .game-left-panel {
+    display: none;
+  }
+}
+
+/* Animasyonlar */
+.fade-in {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .current-player {

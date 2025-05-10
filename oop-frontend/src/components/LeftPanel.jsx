@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Css/LeftPanel.css';
+import ChatBox from './ChatBox';
 
 export default function LeftPanel({ 
   playerCountries, 
   onCountrySelect,
   gameInfo,
   voteCounts,
-  players 
+  players,
+  options = [],
+  selectedOptions = []
 }) {
-  
+  // Hesaplanan skorlar
   const currentScores = players?.map(player => {
     const economy = (gameInfo?.econScores?.[player.countryName] || player.economyScore || 0) / 10;
     const welfare = (gameInfo?.welfareScores?.[player.countryName] || player.welfareScore || 0) / 10;
@@ -28,42 +31,46 @@ export default function LeftPanel({
 
   return (
     <div className="left-panel-container">
-      <div className="country-buttons-vertical">
-        {playerCountries.map(code => (
-          <button
-            key={code}
-            className="country-button"
-            onClick={() => onCountrySelect(code)}
-          >
-            Ülke {code}
-          </button>
-        ))}
-      </div>
+    
+      {/* Sağ taraf: Ülke butonları ve Skor tablosu */}
+      <div className="left-panel-content">
+        <div className="country-buttons-vertical">
+          {playerCountries.map(code => (
+            <button
+              key={code}
+              className="country-button"
+              onClick={() => onCountrySelect(code)}
+            >
+              Ülke {code}
+            </button>
+          ))}
+        </div>
 
-      <div className="score-table">
-        <h3>Mevcut Puanlar</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Ülke</th>
-              <th>Eko.</th>
-              <th>Ref.</th>
-              <th>Oy</th>
-              <th>Top.</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentScores.map(score => (
-              <tr key={score.country}>
-                <td>{score.country}</td>
-                <td>{score.details.economy.toFixed(1)}</td>
-                <td>{score.details.welfare.toFixed(1)}</td>
-                <td>{score.details.votes.toFixed(1)}</td>
-                <td><strong>{score.score.toFixed(1)}</strong></td>
+        <div className="score-table">
+          <h3>Mevcut Puanlar</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Ülke</th>
+                <th>Eko.</th>
+                <th>Ref.</th>
+                <th>Oy</th>
+                <th>Top.</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {currentScores.map(score => (
+                <tr key={score.country}>
+                  <td>{score.country}</td>
+                  <td>{score.details.economy.toFixed(1)}</td>
+                  <td>{score.details.welfare.toFixed(1)}</td>
+                  <td>{score.details.votes.toFixed(1)}</td>
+                  <td><strong>{score.score.toFixed(1)}</strong></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
