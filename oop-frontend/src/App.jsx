@@ -167,16 +167,18 @@ export default function App(){
   };
 
   const handleRestart = () => {
+<<<<<<< Updated upstream
     // Reset rounds counter
+=======
+    // Keep selectedPlayersCount as is
+>>>>>>> Stashed changes
     setRoundsPlayed(0);
     
     // tüm state'leri sıfırla
     setGameStage("start");
-    setSelectedPlayersCount(1);
     setCurrentPlayerIndex(0);
     setPlayerCountries([]);
     setIsSubmitting(false);
-
     setCurrentCountryIndex(0);
     setCountryPolicies({});
     setGlobalProblem("");
@@ -186,6 +188,8 @@ export default function App(){
     setScores({});
     setVoteCounts({});
     setViewCountry(null);
+    setSelectedOptions([]); // Clear selected options
+    // Removed: setSelectedPlayersCount(1)
   };
 
   // --- oynama akışı handler'ları ---
