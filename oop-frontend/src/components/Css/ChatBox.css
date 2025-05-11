@@ -43,3 +43,11 @@
 .chat-C { background-color: #d6eaff; }
 .chat-D { background-color: #e5d6f8; }
 .chat-E { background-color: #d6f8f2; }
+
+.chat-problem {
+  background-color: #f0f8ff;
+  border-left: 4px solid #007bff;
+  margin-bottom: 15px;
+  padding: 10px;
+  font-weight: 500;
+}

@@ -1,5 +1,3 @@
-// src/components/StartScreen.jsx
-import React from 'react';
 import './Css/StartScreen.css';
 
 export default function StartScreen({ onStart }) {

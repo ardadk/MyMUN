@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
 import './Css/LeftPanel.css';
-import ChatBox from './ChatBox';
+
 
 export default function LeftPanel({ 
   playerCountries, 
@@ -8,8 +7,6 @@ export default function LeftPanel({
   gameInfo,
   voteCounts,
   players,
-  options = [],
-  selectedOptions = []
 }) {
   // Hesaplanan skorlar
   const currentScores = players?.map(player => {

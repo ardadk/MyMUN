@@ -1,30 +1,25 @@
+// importlarımız
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import StartScreen from "./components/StartScreen";
-import PlayerSelection from "./components/PlayerSelection";
 import CountrySelection from "./components/CountrySelection";
 import GameSummary from "./components/GameSummary";
-
 import GameScreenLayout from "./components/GameScreenLayout";
 import LeftPanel from "./components/LeftPanel";
 import RightPanel from "./components/RightPanel/RightPanel";
 import CountryPage from "./components/CountryPage/CountryPage";
 import GameOver from "./components/GameOver";
-import Scoreboard from "./components/RightPanel/Scoreboard";
 import ChatBox from "./components/ChatBox";
 import { Player } from "./models/Player";
 import { GameService } from "./services/GameService";
 
-
 export default function App() {
- 
+  // stateler ve tanımlamaları
   const [gameStage, setGameStage] = useState("start");
   const [selectedPlayersCount, setSelectedPlayersCount] = useState(1);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [playerCountries, setPlayerCountries] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  
   const [currentCountryIndex, setCurrentCountryIndex] = useState(0);
   const [countryPolicies, setCountryPolicies] = useState({});
   const [globalProblem, setGlobalProblem] = useState("");
@@ -34,11 +29,7 @@ export default function App() {
   const [scores, setScores] = useState({});
   const [voteCounts, setVoteCounts] = useState({});
   const [roundsPlayed, setRoundsPlayed] = useState(0);
-  
   const [viewCountry, setViewCountry] = useState(null);
-  
-
-  
   const [gameId, setGameId] = useState(null);
   const [gameInfo, setGameInfo] = useState({
     econScores: {},
@@ -48,7 +39,7 @@ export default function App() {
   const [players, setPlayers] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
 
-  
+  //start butonuna tıklandığında
   const handleStartClick = () => {
     setSelectedPlayersCount(5); 
     setPlayerCountries(Array(5).fill(""));
@@ -72,7 +63,7 @@ export default function App() {
     else setGameStage("completed");
   };
 
-  
+  //backend'den gelen verileri işleme
   const handleSubmitToBackend = async () => {
     try {
       setIsSubmitting(true);
@@ -127,6 +118,7 @@ export default function App() {
     }
   };
 
+  // Oyuncu puanlarını güncelleme
   const updatePlayerRating = async (playerId, rating) => {
     try {
       await GameService.updatePlayerRating(gameId, playerId, rating);
@@ -139,6 +131,7 @@ export default function App() {
     }
   };
 
+  // Oyunu yeniden başlatma
   const handleRestart = () => {
     setRoundsPlayed(0);
     setGameStage("start");
@@ -158,6 +151,7 @@ export default function App() {
     setViewCountry(null);
   };
 
+  //Seçeneklerin seçilmesi ekonomi ve refah etkileri
   const handleOptionSelect = async (opt) => {
     if (!opt) return;
 
@@ -190,7 +184,7 @@ export default function App() {
       console.error("Seçenek uygulanamadı:", error.response?.data || error);
     }
   };
-
+// Oyuncunun oylama yapması
   const handleVoteSubmit = (votes) => {
     const newVoteCounts = { ...voteCounts };
     Object.entries(votes).forEach(([countryName, vote]) => {
@@ -214,7 +208,7 @@ export default function App() {
       });
     }
   };
-
+// Oyuncu bilgilerini güncelleme
   useEffect(() => {
     if (gameId && gameStage === "playing") {
       fetchGameInfo();
@@ -233,7 +227,7 @@ export default function App() {
       console.error("Oyun bilgileri alınırken hata oluştu:", error);
     }
   };
-
+// Problem bilgilerini güncelleme
   const fetchProblem = async () => {
     try {
       const response = await axios.get(
@@ -249,6 +243,7 @@ export default function App() {
       console.error("Problem alınamadı:", error);
     }
   };
+// div yapısı
 
   switch (gameStage) {
     case "start":
@@ -331,8 +326,7 @@ export default function App() {
         <div className="game-center-content">
           <h2>Konsey Toplantısı</h2>
           <ChatBox 
-            options={chatMessages} 
-            voter={playerCountries[currentCountryIndex]}
+            problem={globalProblem}
             selectedOptions={selectedOptions}
           />
         </div>
