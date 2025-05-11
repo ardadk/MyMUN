@@ -133,13 +133,12 @@ export default function App() {
 
   // Oyunu yeniden başlatma
   const handleRestart = () => {
+      // Keep selectedPlayersCount as is
     setRoundsPlayed(0);
     setGameStage("start");
-    setSelectedPlayersCount(1);
     setCurrentPlayerIndex(0);
     setPlayerCountries([]);
     setIsSubmitting(false);
-
     setCurrentCountryIndex(0);
     setCountryPolicies({});
     setGlobalProblem("");
@@ -149,6 +148,8 @@ export default function App() {
     setScores({});
     setVoteCounts({});
     setViewCountry(null);
+    setSelectedOptions([]); // Clear selected options
+    // Removed: setSelectedPlayersCount(1)
   };
 
   //Seçeneklerin seçilmesi ekonomi ve refah etkileri
