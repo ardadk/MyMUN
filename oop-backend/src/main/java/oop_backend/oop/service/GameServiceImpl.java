@@ -34,7 +34,6 @@ public class GameServiceImpl implements GameService {
         
         System.out.println("\n✅ YENİ OYUN BAŞLATILDI ✅");
         System.out.println("------------------------");
-        System.out.println("🌍 Dünya Problemi: " + problem.getDescription());
         System.out.println("------------------------");
         
         for (Player player : players) {

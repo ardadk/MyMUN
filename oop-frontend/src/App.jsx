@@ -200,7 +200,7 @@ export default function App() {
       setScoreTurnIndex(0);
       setRoundsPlayed((prev) => {
         const newRounds = prev + 1;
-        if (newRounds >= 3) {
+        if (newRounds >= 5) {
           setGameStage("gameOver");
         } else {
           fetchProblem();

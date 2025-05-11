@@ -1,28 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Css/ChatBox.css';
 
-const ChatBox = ({ problem = "", selectedOptions = [] }) => {
+const ChatBox = ({ selectedOptions = [] }) => {
   const [allMessages, setAllMessages] = useState([]);
-  const prevProblemRef = useRef("");
   
-  // Problem veya seçenekler değiştiğinde mesajları güncelle
-  useEffect(() => {
-    // Eğer yeni problem geldiyse ve öncekinden farklıysa ekle
-    if (problem && problem !== prevProblemRef.current) {
-      const problemMessage = {
-        country: "Sistem",
-        text: problem,
-        isProblem: true,
-        timestamp: new Date().getTime()
-      };
-      
-      // Önceki mesajları koru ve problemi sona ekle
-      setAllMessages(prev => [...prev, problemMessage]);
-      prevProblemRef.current = problem;
-    }
-  }, [problem]);
-  
-  // Seçenekler değiştiğinde mesajları güncelle
   useEffect(() => {
     if (!selectedOptions || selectedOptions.length === 0) return;
     
@@ -53,7 +34,7 @@ const ChatBox = ({ problem = "", selectedOptions = [] }) => {
           ? allMessages.map((msg, i) => (
               <div 
                 key={i} 
-                className={`chat-message ${msg.isProblem ? 'chat-problem' : `chat-${msg.country}`}`}
+                className={`chat-message chat-${msg.country}`}
               >
                 <strong>{msg.country}:</strong> {msg.text}
               </div>
