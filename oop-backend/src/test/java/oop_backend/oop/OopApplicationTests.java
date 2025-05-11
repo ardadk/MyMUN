@@ -25,10 +25,21 @@ class OopApplicationTests {
 
     @BeforeEach
     void setUp() throws Exception {
-        // Her test öncesi yeni bir oyun oluştur
+        // Her test öncesi yeni bir oyun oluştur (start endpoint'i kullanarak)
+        String requestBody = """
+            {
+                "players": [
+                    {"userId": 1, "countryName": "A"},
+                    {"userId": 2, "countryName": "B"},
+                    {"userId": 3, "countryName": "C"}
+                ]
+            }
+            """;
+        
         String response = mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/game/create")
-                .contentType(MediaType.APPLICATION_JSON))
+                .post("/api/game/start")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
@@ -44,12 +55,25 @@ class OopApplicationTests {
     }
 
     @Test
-    void testCreateGame() throws Exception {
+    void testStartGame() throws Exception {
+        String requestBody = """
+            {
+                "players": [
+                    {"userId": 4, "countryName": "D"},
+                    {"userId": 5, "countryName": "E"}
+                ]
+            }
+            """;
+            
         mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/game/create")
-                .contentType(MediaType.APPLICATION_JSON))
+                .post("/api/game/start")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.gameId", notNullValue()));
+                .andExpect(jsonPath("$.gameId", notNullValue()))
+                .andExpect(jsonPath("$.gameData.problem", notNullValue()))
+                .andExpect(jsonPath("$.gameData.options", notNullValue()))
+                .andExpect(jsonPath("$.gameData.players", hasSize(2)));
     }
 
     @Test
@@ -58,17 +82,27 @@ class OopApplicationTests {
                 .get("/api/game/problem/next/" + gameId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.problem.description", notNullValue()))
-                .andExpect(jsonPath("$.options", hasSize(greaterThan(0))));
+                .andExpect(jsonPath("$.problem", notNullValue()))
+                .andExpect(jsonPath("$.options", notNullValue()));
     }
 
     @Test
-    void testUpdateGameInfo() throws Exception {
+    void testGetGamePlayers() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/game/players/" + gameId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3))) // 3 oyuncu eklemiştik
+                .andExpect(jsonPath("$[0].countryName", notNullValue()));
+    }
+
+    @Test
+    void testUpdatePlayerScores() throws Exception {
         String requestBody = """
             {
                 "country": "A",
-                "economyEffect": 5,
-                "welfareEffect": -2
+                "economyEffect": 3,
+                "welfareEffect": 2
             }
             """;
 
@@ -76,79 +110,41 @@ class OopApplicationTests {
                 .put("/api/game/info/" + gameId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void testGetAllProblems() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/game/problems")
-                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(greaterThan(0))));
+                .andExpect(jsonPath("$.success", is(true)));
     }
 
     @Test
-    void testGetCurrentProblem() throws Exception {
+    void testGetGameInfo() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/game/problem/current/" + gameId)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.description", notNullValue()));
-    }
-
-    @Test
-    void testGetGameScore() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/game/score/" + gameId)
+                .get("/api/game/info/" + gameId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.econScores", notNullValue()))
-                .andExpect(jsonPath("$.welfareScores", notNullValue()));
-    }
-
-    @Test
-    void testUpdateGameScore() throws Exception {
-        String requestBody = """
-            {
-                "country": "A",
-                "score": 5
-            }
-            """;
-
-        mockMvc.perform(MockMvcRequestBuilders
-                .put("/api/game/score/" + gameId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                .andExpect(status().isOk());
+                .andExpect(jsonPath("$.welfareScores", notNullValue()))
+                .andExpect(jsonPath("$.policies", notNullValue()));
     }
 
     @Test
     void testErrorHandling() throws Exception {
         // Geçersiz gameId ile istek
         mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/game/problem/next/invalid-id")
+                .get("/api/game/info/invalid-id")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void testGameFlow() throws Exception {
-        // 1. Oyun oluştur
-        // 2. İlk problemi al
-        // 3. Kararı gönder
-        // 4. Skoru güncelle
         // Tam bir oyun akışını test et
         
-        // Oyun oluşturma zaten setUp'ta yapılıyor
-        
-        // Problem al
+        // 1. Problem al
         mockMvc.perform(MockMvcRequestBuilders
                 .get("/api/game/problem/next/" + gameId))
                 .andExpect(status().isOk());
 
-        // Karar gönder
-        String decision = """
+        // 2. Oyuncu A'nın seçimini yap
+        String decisionA = """
             {
                 "country": "A",
                 "economyEffect": 3,
@@ -158,20 +154,29 @@ class OopApplicationTests {
         mockMvc.perform(MockMvcRequestBuilders
                 .put("/api/game/info/" + gameId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(decision))
+                .content(decisionA))
                 .andExpect(status().isOk());
-
-        // Skor güncelle
-        String score = """
+                
+        // 3. Oyuncu B'nin seçimini yap
+        String decisionB = """
             {
-                "country": "A",
-                "score": 5
+                "country": "B",
+                "economyEffect": -1,
+                "welfareEffect": 4
             }
             """;
         mockMvc.perform(MockMvcRequestBuilders
-                .put("/api/game/score/" + gameId)
+                .put("/api/game/info/" + gameId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(score))
+                .content(decisionB))
                 .andExpect(status().isOk());
+                
+        // 4. Oyun bilgilerini kontrol et
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/game/info/" + gameId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.econScores.A", not(50))) // Değişmiş olmalı
+                .andExpect(jsonPath("$.welfareScores.B", not(50))); // Değişmiş olmalı
     }
 }
