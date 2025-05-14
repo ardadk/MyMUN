@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { Player } from '../models/Player';
-import { WorldProblem } from '../models/WorldProblem';
+
 
 export class GameService {
   static async startGame(players) {

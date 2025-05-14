@@ -8,19 +8,13 @@ public class Player {
     private int economyScore; // Yeni ekonomi skoru alanı
     private int welfareScore; // Yeni refah skoru alanı
     
-    // Yapıcılar
-    public Player() {
-        this.rating = 0; // Başlangıç değeri
-        this.economyScore = 50; // Başlangıç değeri
-        this.welfareScore = 50; // Başlangıç değeri
-    }
-    
+
     public Player(Long userId, String countryName) {
         this.userId = userId;
         this.countryName = countryName;
         this.rating = 0; // Başlangıç değeri
-        this.economyScore = 50; // Başlangıç değeri
-        this.welfareScore = 50; // Başlangıç değeri
+        this.economyScore = 50; 
+        this.welfareScore = 50; 
     }
     
     // Getter ve setter metodları

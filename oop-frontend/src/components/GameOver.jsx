@@ -29,7 +29,7 @@ export default function GameOver({ onRestart, voteCounts, players, gameInfo}) {
     <div className="game-over">
       <div className="game-over-content">
         <h1>Oyun Bitti!</h1>
-        <p>10 tur tamamladınız. Tebrikler!</p>
+        <p>5 tur tamamladınız. Tebrikler!</p>
         
         <div className="winner-announcement">
           <h2>🏆 Kazanan: {winner.country}</h2>

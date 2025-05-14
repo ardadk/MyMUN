@@ -57,7 +57,8 @@ export class Player {
         return {
             userId: this.userId,
             countryName: this.countryName,
-            rating: this.rating
+            rating: this.rating,
+            policy: this.policy,
         };
     }
 }

@@ -47,7 +47,7 @@ public class GameController {
             List<Player> players = new ArrayList<>();
             for (StartGameRequest.PlayerRequest playerRequest : request.getPlayers()) {
                 Player player = new Player(playerRequest.getUserId(), playerRequest.getCountryName());
-                player.setPolicy(policyService.getRandomPolicy());
+                player.setPolicy(policyService.getUniqueRandomPolicy());
                 players.add(player);
             }
 

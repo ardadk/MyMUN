@@ -7,9 +7,9 @@ export default function Scoreboard({ gameInfo, voteCounts }) {
 
   
   const entries = Object.keys(econScores).map((country) => {
-    const eko = Number(econScores[country] ?? 0);
-    const ref = Number(welfareScores[country] ?? 0);
-    const oy  = Number(voteCounts?.[country] ?? 0);
+    const eko = (Number(econScores[country]) / 10 ?? 0);
+    const ref = (Number(welfareScores[country]) /10 ?? 0);
+    const oy  = (Number(voteCounts?.[country])  ?? 0);
     const top = eko + ref + oy;
     return { country, eko, ref, oy, top };
   });
@@ -24,10 +24,10 @@ export default function Scoreboard({ gameInfo, voteCounts }) {
         <thead>
           <tr>
             <th>Ülke</th>
-            <th>Eko.</th>
-            <th>Ref.</th>
-            <th>Oy</th>
-            <th>Top.</th>
+            <th>Ekonomi</th>
+            <th>Refah Düzeyi</th>
+            <th>Oy Toplamı</th>
+            <th>Toplam Puan</th>
           </tr>
         </thead>
         <tbody>

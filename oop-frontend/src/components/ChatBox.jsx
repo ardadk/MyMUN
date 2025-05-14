@@ -1,30 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './Css/ChatBox.css';
 
-const ChatBox = ({ selectedOptions = [] }) => {
+const ChatBox = ({ problem = "", selectedOptions = [] }) => {
   const [allMessages, setAllMessages] = useState([]);
+  const processedOptionsRef = useRef(new Set());
   
+  // Bileşen ilk yüklendiğinde tüm seçenekleri işle
   useEffect(() => {
     if (!selectedOptions || selectedOptions.length === 0) return;
     
-    // En son eklenen seçeneği al
-    const latestOption = selectedOptions[selectedOptions.length - 1];
+    const newMessages = [];
     
-    // Eğer bu seçenek henüz mesajlarda yoksa ekle
-    if (latestOption && !allMessages.some(msg => 
-        msg.text === latestOption.text && 
-        msg.country === latestOption.voter)) {
+    // Problem mesajı kaldırıldı
+    
+    // Tüm seçenekleri ekle (daha önce eklenmemişlerse)
+    selectedOptions.forEach(option => {
+      const optionId = `${option.voter}-${option.text}`;
       
-      const newMessage = {
-        country: latestOption.voter || "Sistem",
-        text: latestOption.text || "Seçenek seçildi",
-        isProblem: false,
-        timestamp: new Date().getTime()
-      };
-      
-      setAllMessages(prev => [...prev, newMessage]);
+      if (!processedOptionsRef.current.has(optionId)) {
+        processedOptionsRef.current.add(optionId);
+        
+        newMessages.push({
+          country: option.voter || "Sistem",
+          text: option.text || "Seçenek seçildi",
+          isProblem: false,
+          timestamp: new Date().getTime()
+        });
+      }
+    });
+    
+    if (newMessages.length > 0) {
+      setAllMessages(prev => [...prev, ...newMessages]);
     }
-  }, [selectedOptions, allMessages]);
+  }, [selectedOptions]); // problem dependency'den çıkartıldı
 
   return (
     <div className="chatbox">

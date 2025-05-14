@@ -32,14 +32,14 @@ public class GameServiceImpl implements GameService {
         String gameId = generateGameId();
         activeGames.put(gameId, problem);
         
-        System.out.println("\n✅ YENİ OYUN BAŞLATILDI ✅");
+        System.out.println("\n YENİ OYUN BAŞLATILDI ");
         System.out.println("------------------------");
         System.out.println("------------------------");
         
         for (Player player : players) {
-            System.out.println("👤 Oyuncu ID: " + player.getUserId() + 
-                              " | 🌍 Ülke: " + player.getCountryName() + 
-                              " | 📜 Politika: " + player.getPolicy());
+            System.out.println(" Oyuncu ID: " + player.getUserId() + 
+                              " |  Ülke: " + player.getCountryName() + 
+                              " |  Politika: " + player.getPolicy());
         }
         
         System.out.println("------------------------\n");
@@ -60,7 +60,7 @@ public class GameServiceImpl implements GameService {
     @Override
     public void updateGameProblem(String gameId, WorldProblem problem) {
         if (problem == null) {
-            logger.error("Güncellenmeye çalışılan problem null!");
+            logger.error("problem null");
             return;
         }
         
@@ -74,10 +74,10 @@ public class GameServiceImpl implements GameService {
         logger.info("Önceki problem: {}", previousProblem != null ? previousProblem.getDescription() : "Bulunmuyor");
         logger.info("Yeni problem: {}", problem.getDescription());
         
-        System.out.println("\n🔄 PROBLEM DEĞİŞTİRİLDİ 🔄");
+        System.out.println("\n PROBLEM DEĞİŞTİRİLDİ ");
         System.out.println("------------------------");
-        System.out.println("🌍 Yeni Dünya Problemi: " + problem.getDescription());
-        System.out.println("🔢 Seçenek Sayısı: " + (problem.getOptions() != null ? problem.getOptions().size() : 0));
+        System.out.println(" Yeni Dünya Problemi: " + problem.getDescription());
+        System.out.println(" Seçenek Sayısı: " + (problem.getOptions() != null ? problem.getOptions().size() : 0));
         System.out.println("------------------------");
     }
     
