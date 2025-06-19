@@ -97,9 +97,5 @@ mymun-frontend/
 | PUT    | `/api/game/info/{gameId}`         | Updates the scores of a specified country's player based on economic and welfare effects. |
 | GET    | `/api/game/info/{gameId}`         | Returns the current game state, including economy/welfare scores and assigned policies.   |
 
----
 
-## 📄 License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
 
