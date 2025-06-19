@@ -22,7 +22,6 @@ The primary goal of the game is to deepen strategic thinking skills, improve gro
 
 - Java 21
 - Spring Boot 3.4.4
-- JPA & Hibernate
 - Maven
 
 ### Frontend
